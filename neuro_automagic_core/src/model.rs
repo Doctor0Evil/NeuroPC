@@ -114,3 +114,20 @@ pub mod heapless_string {
 
     // For `no_std` targets, this module can be extended with an actual fixed-capacity string.
 }
+/// Helpers for constructing well-known NeuroCitizens for this Space.
+impl NeuroCitizen {
+    /// Primary augmented-citizen for this NeuroPC Space.
+    pub fn primary_bostrom_augmented() -> Self {
+        use crate::model::heapless_string::HeaplessString;
+
+        NeuroCitizen {
+            id: NeuroCitizenId {
+                external_ref: HeaplessString::from_str(
+                    "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+                ),
+            },
+            is_primary_augmented_citizen: true,
+            label: HeaplessString::from_str("PrimaryAugmentedCitizen"),
+        }
+    }
+}
