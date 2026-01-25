@@ -1,0 +1,15 @@
+[package]
+name = "neuro_automagic"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Automagic assistance engine and integrations for NeuroPC using neuro_automagic_core."
+repository = "https://github.com/Doctor0Evil/NeuroPC"
+readme = "README.md"
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+neuro_automagic_core = { path = "../neuro_automagic_core", features = ["std"] }
