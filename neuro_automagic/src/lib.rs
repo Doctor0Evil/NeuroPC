@@ -4,7 +4,7 @@
 //! for Cargo and editor tooling, built on neuro_automagic_core.
 
 #![cfg_attr(not(feature = "std"), no_std)]
-
+pub mod session;
 pub mod event;
 pub mod engine;
 pub mod integration_cargo;
