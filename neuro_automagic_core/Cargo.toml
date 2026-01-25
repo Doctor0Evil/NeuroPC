@@ -1,0 +1,14 @@
+[package]
+name = "neuro_automagic_core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Core data model and traits for NeuroPC neuro-intent, neuro-context, neuro-rights, and neuro-automation rules."
+repository = "https://github.com/Doctor0Evil/NeuroPC"
+readme = "README.md"
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
