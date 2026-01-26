@@ -1,0 +1,49 @@
+version 1.0
+schema biospectre.lifeforce_profile
+
+hostid bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+sessionutc 2026-01-26T19:24:00Z
+
+biophysical_status {
+  blood_stability_01     0.82
+  protein_reserve_01     0.76
+  sugar_stability_01     0.71
+  brain_clarity_01       0.68
+  chi_resilience_01      0.73
+  lifeforce_trend_01     0.80
+}
+
+lifeforce_state {
+  lifeforce_scalar_01    0.77
+  band                   "green"
+}
+
+lifeforce_policy_snapshot {
+  min_lifeforce_for_dw           0.40
+  min_lifeforce_for_blood_spend  0.65
+  max_blood_fraction_per_dw      0.08
+  min_chi_for_heavy_dw           0.55
+}
+
+token_balances_before {
+  blood_tokens     420
+  protein_tokens   310
+  sugar_tokens     290
+  brain_tokens     1280
+  dw_tokens        9
+}
+
+dw_event_log [
+  {
+    event_id        "dw-2026-01-26-01"
+    intensity_01    0.72
+    lifeforce_band  "green"
+    lifeforce_scalar_01 0.77
+    protein_spent   4
+    sugar_spent     6
+    blood_spent     2
+    dw_spent        1
+    reason          "DW event allowed with BLOOD fallback under green band and chi>=threshold."
+    did_signature {
+      did: "did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0",
+      signature: "0x3d7e4c1f8b9a5d2c4e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6......
