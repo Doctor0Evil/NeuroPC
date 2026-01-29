@@ -1,0 +1,34 @@
+filetype bioflux/v1.0 {
+
+  header {
+    schema_version: "bioflux/v1.0"
+    experiment_id: string        // links to .evo/.ghost_evo
+    micro_epoch_ref: string?     // optional, for online epochs
+    created_at: datetime_iso8601
+    temporal_resolution_ms: u16  // 1–100 ms
+  }
+
+  constraints {
+    temporal_resolution_ms in [1, 100]
+  }
+
+  sample {
+    t_ms: u64                    // monotonic, ms since header.created_at
+    circadian_phase_rad: float32 // [0, 2π), matches .circmap
+    dopamine_uM: float32         // 0.1–10 μM
+    h2o2_uM: float32             // 0.05–5 μM
+    fatigue_index: float32       // 0–1
+    focus_index: float32         // 0–1
+    stress_index: float32        // 0–1
+    clarity_index: float32       // 0–1
+    confidence: float32          // 0–1, overall reliability
+  }
+
+  validation {
+    dopamine_uM in [0.1, 10.0]
+    h2o2_uM in [0.05, 5.0]
+    fatigue_index, focus_index, stress_index, clarity_index, confidence in [0.0, 1.0]
+    circadian_phase_rad in [0.0, 6.2831855]
+    t_ms strictly increasing
+  }
+}
