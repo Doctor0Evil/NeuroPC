@@ -1,0 +1,15 @@
+schema SovereignChannelProfile
+  string project_id
+  string sovereign_id          # e.g., Bostrom or DID
+  string channel_id
+  float  g_max                 # 0.0–1.0
+  float  d_max                 # 0.0–1.0
+  float  f_warn                # 0.0–1.0
+  float  f_stop                # 0.0–1.0
+  float  r_max                 # 0.0–1.0
+  float  eco_devhrs_reduced    # normalized eco-help
+  float  eco_kwh_saved         # normalized eco-help
+  float  eco_devices_averted   # normalized eco-help
+  float  min_decoder_accuracy  # e.g., 0.90
+  float  max_avg_latency_ms
+end
