@@ -1,0 +1,22 @@
+filetype ghost_evo/v1.0 {
+
+  header {
+    schema_version: "ghost_evo/v1.0"
+    experiment_id: string
+    source_online_experiment_id: string
+    subject_did: string
+    created_at: datetime_iso8601
+    circadian_phase_offset_rad: float32  // −π..π
+  }
+
+  replay {
+    fidelity_pearson_r: float32          // 0–1
+    metabolic_cost_uJ: float32           // μJ per epoch
+    num_replayed_intervals: u16
+  }
+
+  validation {
+    circadian_phase_offset_rad in [-3.1415927, 3.1415927]
+    fidelity_pearson_r in [0.0, 1.0]
+  }
+}
