@@ -1,0 +1,23 @@
+filetype circmap/v1.0 {
+
+  header {
+    schema_version: "circmap/v1.0"
+    subject_did: string
+    created_at: datetime_iso8601
+  }
+
+  epoch_states[] {
+    name: string                         // "MorningFocus", etc.
+    phase_start_rad: float32             // 0–2π
+    phase_end_rad: float32               // 0–2π
+    min_duration_min: u16                // 15–540
+    max_duration_min: u16                // 15–540
+    allowed_families: set<enum { focus, recovery, exploration }>
+    max_intervals_in_state: u16          // 0–50
+  }
+
+  validation {
+    epoch_states.phase_start_rad, phase_end_rad in [0, 6.2831855]
+    epoch_states.min_duration_min, max_duration_min in [15, 540]
+  }
+}
