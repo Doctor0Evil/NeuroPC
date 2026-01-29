@@ -1,0 +1,26 @@
+filetype evo/v1.0 {
+
+  header {
+    schema_version: "evo/v1.0"
+    pattern_id: string
+    family: enum { focus, recovery, exploration }
+    risk_class: u8               // 0–5
+    reversible: bool
+  }
+
+  params {
+    default_interval_s: u16      // 10–3600
+    max_intervals_per_day: u16   // 0–200
+    energy_cost_pJ_per_interval: float32
+  }
+
+  links {
+    documentation_uri: string?
+  }
+
+  validation {
+    risk_class in [0, 5]
+    default_interval_s in [10, 3600]
+    max_intervals_per_day in [0, 200]
+  }
+}
