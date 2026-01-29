@@ -1,0 +1,27 @@
+filetype sim_organic/v1.0 {
+
+  header {
+    schema_version: "sim_organic/v1.0"
+    simulator_version: string
+    subject_did: string
+    experiment_id: string
+    created_at: datetime_iso8601
+  }
+
+  model {
+    neuron_model: enum { LIF, PMSN, Custom }
+    dt_ms: float32                 // timestep
+    energy_model: enum { pJ_per_spike, custom }
+  }
+
+  outputs {
+    predicted_dopamine_uM: float32
+    predicted_h2o2_uM: float32
+    predicted_performance_delta: float32  // −1..1
+  }
+
+  validation {
+    dt_ms > 0
+    predicted_performance_delta in [-1.0, 1.0]
+  }
+}
