@@ -1,0 +1,40 @@
+filetype neuro_rights/v1.0 {
+
+  header {
+    schema_version: "neuro_rights/v1.0"
+    rights_doc_uri: string      // human-readable policy reference
+    subject_did: string         // decentralized ID of OrganicCPU host
+    created_at: datetime_iso8601
+    valid_until: datetime_iso8601?
+    signature_hash: bytes[32]   // Ed25519 signature over header+body
+  }
+
+  consent {
+    consent_granularity: enum {
+      raw_neural,        // raw traces allowed
+      feature_vector,    // derived features only
+      decoded_intent     // high-level intents only
+    }
+    allow_online_modulation: bool
+    allow_offline_replay: bool
+  }
+
+  constraints {
+    max_daily_risk_class: u8         // 0–5
+    require_reversible: bool
+    max_nonlogged_events: u32
+    privacy_level: enum { low, medium, high }
+  }
+
+  integrity {
+    max_cumulative_irr_events_per_year: u32
+    // irreversible events cap
+    allowed_data_retention_days: u16     // 1–365
+    audit_required: bool
+  }
+
+  validation {
+    max_daily_risk_class in [0, 5]
+    allowed_data_retention_days in [1, 365]
+  }
+}
