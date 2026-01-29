@@ -1,0 +1,21 @@
+filetype evobudget/v1.0 {
+
+  header {
+    schema_version: "evobudget/v1.0"
+    experiment_date: date
+    subject_did: string
+    total_intervals_cap: u16     // default 10, hard max 50
+  }
+
+  pattern_budgets[] {
+    pattern_id: string
+    max_intervals_today: u16     // 0–50
+    max_risk_class: u8           // 0–5
+  }
+
+  validation {
+    total_intervals_cap in [0, 50]
+    pattern_budgets.max_intervals_today in [0, 50]
+    pattern_budgets.max_risk_class in [0, 5]
+  }
+}
