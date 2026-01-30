@@ -1,0 +1,26 @@
+{
+  "$schema": "https://neuro.pc/schemas/evolve_token.schema.json",
+  "type": "object",
+  "required": ["id", "subject_id", "scope", "max_effect_size", "valid_from", "valid_until", "revocable"],
+  "properties": {
+    "id": { "type": "string" },
+    "subject_id": { "type": "string" },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "max_effect_size": { "type": "number" },
+    "valid_from": { "type": "string", "format": "date-time" },
+    "valid_until": { "type": "string", "format": "date-time" },
+    "physio_guard": {
+      "type": "object",
+      "properties": {
+        "hrv_lf_hf_min": { "type": "number" },
+        "emg_fatigue_max": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "revocable": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}
