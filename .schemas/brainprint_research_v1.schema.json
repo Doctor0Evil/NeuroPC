@@ -1,0 +1,282 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neuro.pc/schemas/brainprint_research_v1.schema.json",
+  "title": "BrainPrintResearchView v1",
+  "description": "De-identified, sovereignty-first research telemetry view derived from a BrainPrint capsule, neuromorph-compatible.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": [
+    "schema_version",
+    "record_id",
+    "subject_plane",
+    "sovereignty_mode",
+    "source_capsule_schema",
+    "timestamp_ms",
+    "lifeforce_index",
+    "blood_level",
+    "oxygen_level",
+    "clarity_index",
+    "eco_band",
+    "roh_index",
+    "risk_of_harm",
+    "eco_energy_nj",
+    "policy_flags",
+    "namespaced_metrics"
+  ],
+
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "description": "Research view schema version. For this file: 1."
+    },
+
+    "record_id": {
+      "type": "string",
+      "description": "Opaque, per-record identifier (e.g., UUIDv4 or host-local monotonic ID). No raw host_id."
+    },
+
+    "source_capsule_schema": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "description": "schema_version of the source BrainPrint capsule this view was derived from."
+    },
+
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Unix epoch timestamp in milliseconds, copied from the source BrainPrint header."
+    },
+
+    "subject_plane": {
+      "type": "string",
+      "enum": [
+        "bioscale",
+        "bci_hci",
+        "cybernetic",
+        "software_only",
+        "augmented_citizen",
+        "sandbox"
+      ],
+      "description": "Decoded plane label derived from plane_flags (no raw flags)."
+    },
+
+    "sovereignty_mode": {
+      "type": "string",
+      "enum": [
+        "CONSERVATIVE",
+        "COPILOT",
+        "AUTOEVOLVE"
+      ],
+      "description": "Active neurorights/OS mode at snapshot time, decoded from NeurorightsPolicyDocument."
+    },
+
+    "host_cohort": {
+      "type": "string",
+      "description": "Optional cohort tag used by the data lake (e.g., study ID, deployment cohort). No direct identity.",
+      "nullable": true
+    },
+
+    "profile_hex": {
+      "type": "string",
+      "description": "Optional hex fingerprint of the active evolution/neurorights profile, suitable for grouping but not re-identification.",
+      "pattern": "^[0-9a-fA-F]{8,64}$",
+      "nullable": true
+    },
+
+    "lifeforce_index": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Normalized vitality index (0–1)."
+    },
+
+    "blood_level": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Normalized blood biophysics (0–1)."
+    },
+
+    "oxygen_level": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Normalized oxygen biophysics (0–1)."
+    },
+
+    "clarity_index": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Normalized cognitive clarity index (0–1)."
+    },
+
+    "eco_band": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "description": "Coarse eco-energy band: 0 = low, 1 = medium, 2 = high."
+    },
+
+    "eco_energy_nj": {
+      "type": "number",
+      "minimum": 0.0,
+      "description": "Estimated energy usage over the aggregation window in nanojoules."
+    },
+
+    "roh_index": {
+      "type": "number",
+      "minimum": 0.0,
+      "description": "Standardized risk-of-harm/cognitive-load index (e.g., capped wave/brain ratio)."
+    },
+
+    "roh_trend_24h": {
+      "type": "number",
+      "description": "Change in roh_index over the last ~24h; positive = increasing risk.",
+      "nullable": true
+    },
+
+    "roh_trend_7d": {
+      "type": "number",
+      "description": "Change in roh_index over the last ~7 days.",
+      "nullable": true
+    },
+
+    "risk_of_harm": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Composite harm proximity metric in [0,1], combining pain envelope, oxygen/blood margins, and wave overload."
+    },
+
+    "fatigue_index": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Normalized fatigue estimate (0–1), derived from biophysical state or StateVector.",
+      "nullable": true
+    },
+
+    "assistive_load_index": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Optional normalized index of current assistive work being done by AI modules.",
+      "nullable": true
+    },
+
+    "policy_flags": {
+      "type": "object",
+      "description": "Flattened snapshot of neurorights/evolution policy state relevant to telemetry export.",
+      "required": [
+        "mental_privacy_strict",
+        "mental_integrity_strict",
+        "cognitive_liberty_active",
+        "evolve_required_for_arch_change",
+        "max_external_auto_changes",
+        "auto_changes_used",
+        "pain_envelope_exceeded",
+        "export_allowed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mental_privacy_strict": {
+          "type": "boolean",
+          "description": "True if current policy forbids export beyond local vault unless explicitly consented."
+        },
+        "mental_integrity_strict": {
+          "type": "boolean",
+          "description": "True if irreversible ops are forbidden and rollback path is required."
+        },
+        "cognitive_liberty_active": {
+          "type": "boolean",
+          "description": "True if self-chosen augmentation is allowed and explanations are required for external changes."
+        },
+        "evolve_required_for_arch_change": {
+          "type": "boolean",
+          "description": "True if evolution policy requires EVOLVE tokens for architectural changes."
+        },
+        "max_external_auto_changes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "From CognitiveLibertyPolicy.max_external_auto_changes."
+        },
+        "auto_changes_used": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of auto-changes consumed in the current session/window."
+        },
+        "pain_envelope_exceeded": {
+          "type": "boolean",
+          "description": "True if muscular, cognitive, or emotional pain channel exceeded rollback threshold at snapshot time."
+        },
+        "export_allowed": {
+          "type": "boolean",
+          "description": "True if this research view passed sovereignty export checks (otherwise, record SHOULD NOT be emitted)."
+        }
+      }
+    },
+
+    "namespaced_metrics": {
+      "type": "array",
+      "description": "Sovereign, host-defined extra metrics with explicit namespaces, computed via brainPrint! unleash-macro.",
+      "items": {
+        "type": "object",
+        "required": [
+          "namespace",
+          "name",
+          "semantic_type",
+          "value"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Logical namespace for the metric (e.g., 'bci', 'sw', 'nano', 'motor', 'lang').",
+            "pattern": "^[a-z0-9_.-]{1,32}$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Metric name within the namespace (e.g., 'signal_quality', 'mem_usage').",
+            "pattern": "^[a-zA-Z0-9_.-]{1,64}$"
+          },
+          "semantic_type": {
+            "type": "string",
+            "description": "High-level type of the metric for data-lake tooling.",
+            "enum": [
+              "scalar_0_1",
+              "scalar_unbounded",
+              "count",
+              "duration_ms",
+              "rate_per_s",
+              "categorical_index"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "description": "Numeric value of the metric, interpretation depends on semantic_type."
+          },
+          "unit": {
+            "type": "string",
+            "description": "Optional unit label (e.g., 'ms', 'Hz', 'nj'); empty for normalized metrics.",
+            "maxLength": 16,
+            "nullable": true
+          }
+        }
+      }
+    },
+
+    "labels": {
+      "type": "object",
+      "description": "Optional freeform labels used by data-lake or dashboards for grouping. No PII.",
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 128
+      }
+    }
+  }
+}
