@@ -1,0 +1,35 @@
+[package]
+name = "neuro_pc"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "NeuroPC / organic_CPU sovereignty-first neuromorphic OS stack with neurorights-enforced OTA and evolution."
+authors = ["Augmented Citizen <owner@neuro.pc>"]
+repository = "https://github.com/Doctor0Evil/NeuroPC"
+
+[lib]
+name = "neuro_pc"
+path = "src/lib.rs"
+
+[[bin]]
+name = "consent_check"
+path = "src/bin/consent_check.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+chrono = { version = "0.4", features = ["serde", "clock"] }
+
+# Hashing for audit log chaining (allowed, not on your blacklist).
+sha2 = "0.10"
+hex = "0.4"
+
+# For any path and filesystem work in the core library.
+# (std is used directly; no extra crate needed for basic fs/path.)
+
+[dev-dependencies]
+# For integration tests that need isolated temp directories.
+tempfile = "3"
+
+# (Optionally add test/benchmark helpers here as needed.)
