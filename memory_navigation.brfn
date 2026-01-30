@@ -1,0 +1,32 @@
+{
+  "id": "bf_nav_001",
+  "label": "Daily navigation schema",
+  "class": "ExplicitProcedural",
+  "created_at": "2026-01-30T06:05:00Z",
+  "retention": {
+    "primary_band": "Theta",
+    "secondary_band": "Alpha",
+    "pac_strength": 0.7,
+    "aac_strength": 0.4,
+    "min_retention_sec": 86400,
+    "max_retention_sec": 604800,
+    "priority": 0.9
+  },
+  "meta": {
+    "uncertainty": 0.2,
+    "confidence": 0.8,
+    "in_awareness": true,
+    "last_access": "2026-01-30T06:05:00Z"
+  },
+  "governance": {
+    "owner_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+    "smart_token": null,
+    "consent_state": "NeedsReview",
+    "issued_at": "2026-01-30T06:05:00Z",
+    "evolve_threshold": 0.5
+  },
+  "related_ids": [
+    "cobj_bf_nav_001_commit",
+    "nwbio_bf_nav_001"
+  ]
+}
