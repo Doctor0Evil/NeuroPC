@@ -1,0 +1,34 @@
+{
+  "session_id": "sess_2026_01_30_0600",
+  "created_at": "2026-01-30T06:07:00Z",
+  "turns": [
+    {
+      "index": 1,
+      "role": "User",
+      "timestamp": "2026-01-30T06:00:00Z",
+      "text": "Define cognitive-retention for organic_CPUs with neuralwave_bands.",
+      "latent": {
+        "estimated_uncertainty": 0.4,
+        "estimated_confidence": 0.6,
+        "affect_valence": 0.1,
+        "cognitive_load": 0.7,
+        "dominant_band": "Theta"
+      },
+      "linked_ids": ["bf_nav_001"]
+    },
+    {
+      "index": 2,
+      "role": "Assistant",
+      "timestamp": "2026-01-30T06:00:02Z",
+      "text": "Cognitive-retention is the time-band structure over which memories...",
+      "latent": {
+        "estimated_uncertainty": 0.2,
+        "estimated_confidence": 0.8,
+        "affect_valence": 0.3,
+        "cognitive_load": 0.5,
+        "dominant_band": "Alpha"
+      },
+      "linked_ids": []
+    }
+  ]
+}
