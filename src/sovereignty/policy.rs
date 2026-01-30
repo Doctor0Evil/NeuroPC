@@ -20,7 +20,7 @@ pub struct NrmlPolicy {
     pub sovereignty_core_enabled_flag: bool,
     pub rollback_available_flag: bool,
     pub user_control_channel_flag: bool,
-    /// Directory where OTA-related ConsentObjects (.cobj) are stored.
+    /// Directory where .cobj files live.
     pub consent_dir: PathBuf,
 }
 
@@ -59,9 +59,8 @@ impl NrmlPolicy {
         self.user_control_channel_flag
     }
 
-    /// Real consent check: look for a matching .cobj on disk.
+    /// OTA Commit/Rollback consent: requires a matching .cobj.
     pub fn has_valid_ota_consent(&self, caller: &Caller, action: &OtaAction) -> bool {
-        // Map action to required token type and target identifier.
         let (required_token, target_id) = match action {
             OtaAction::Discover { .. } | OtaAction::Download { .. } => {
                 (RequiredToken::Any, caller.module_id.as_str())
@@ -83,7 +82,23 @@ impl NrmlPolicy {
         let store = ConsentStore::new(&self.consent_dir);
         let now = Utc::now();
         match store.find_valid_for(&self.owner_id, target_id, required_token, now) {
-            Ok(Some(_obj)) => true,
+            Ok(Some(_)) => true,
+            _ => false,
+        }
+    }
+
+    /// Evolution consent: e.g., OS / model / BrainFunction evolution.
+    /// evolve_target_id should be a stable identifier (e.g., "bf_ota_core").
+    pub fn has_valid_evolve_consent(&self, evolve_target_id: &str) -> bool {
+        let store = ConsentStore::new(&self.consent_dir);
+        let now = Utc::now();
+        match store.find_valid_for(
+            &self.owner_id,
+            evolve_target_id,
+            RequiredToken::Evolve,
+            now,
+        ) {
+            Ok(Some(_)) => true,
             _ => false,
         }
     }
