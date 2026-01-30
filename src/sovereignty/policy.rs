@@ -1,7 +1,10 @@
 #![forbid(unsafe_code)]
 
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
+use crate::sovereignty::consent::{ConsentStore, RequiredToken};
 use crate::sovereignty::ota_io::{Caller, OtaAction};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,19 +16,16 @@ pub struct PolicyDecision {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NrmlPolicy {
     pub owner_id: String,
-    /// Trusted OTA signing keys, allowed modules, etc. (simplified for now).
     pub trusted_ota_sources: Vec<String>,
-    /// Whether sovereignty core is reported enabled.
     pub sovereignty_core_enabled_flag: bool,
-    /// Whether at least one rollback path is available.
     pub rollback_available_flag: bool,
-    /// Whether user control channel is available.
     pub user_control_channel_flag: bool,
+    /// Directory where OTA-related ConsentObjects (.cobj) are stored.
+    pub consent_dir: PathBuf,
 }
 
 impl NrmlPolicy {
     pub fn evaluate_ota(&self, _caller: &Caller, action: &OtaAction) -> PolicyDecision {
-        // Skeleton: only allow OTA actions from trusted sources.
         match action {
             OtaAction::Discover { source } | OtaAction::Download { source, .. } => {
                 if self.trusted_ota_sources.contains(source) {
@@ -59,8 +59,32 @@ impl NrmlPolicy {
         self.user_control_channel_flag
     }
 
-    /// For now, just return false; you will wire this to actual .cobj lookup.
-    pub fn has_valid_ota_consent(&self, _caller: &Caller, _action: &OtaAction) -> bool {
-        false
+    /// Real consent check: look for a matching .cobj on disk.
+    pub fn has_valid_ota_consent(&self, caller: &Caller, action: &OtaAction) -> bool {
+        // Map action to required token type and target identifier.
+        let (required_token, target_id) = match action {
+            OtaAction::Discover { .. } | OtaAction::Download { .. } => {
+                (RequiredToken::Any, caller.module_id.as_str())
+            }
+            OtaAction::Verify { package_hash } => {
+                (RequiredToken::Any, package_hash.as_str())
+            }
+            OtaAction::Stage { package_hash } => {
+                (RequiredToken::Any, package_hash.as_str())
+            }
+            OtaAction::Commit { package_hash } => {
+                (RequiredToken::Commit, package_hash.as_str())
+            }
+            OtaAction::Rollback { target_version } => {
+                (RequiredToken::Commit, target_version.as_str())
+            }
+        };
+
+        let store = ConsentStore::new(&self.consent_dir);
+        let now = Utc::now();
+        match store.find_valid_for(&self.owner_id, target_id, required_token, now) {
+            Ok(Some(_obj)) => true,
+            _ => false,
+        }
     }
 }
