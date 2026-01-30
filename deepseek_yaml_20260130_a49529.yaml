@@ -1,0 +1,15 @@
+BiophysicalDataBillOfRights:
+  Article1: 
+    - All neural data remains property of originator
+    - No derivative inferences can be claimed by processors
+    - Right to complete deletion (including backups)
+  
+  Article2:
+    - Right to portable formats (open standards required)
+    - Right to real-time streaming access
+    - Right to algorithmic transparency on all processing
+  
+  Article3:
+    - No discrimination based on biophysical data
+    - No use for behavioral manipulation without consent
+    - No sale or transfer of data sovereignty

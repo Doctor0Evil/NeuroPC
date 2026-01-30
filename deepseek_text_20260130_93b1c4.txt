@@ -1,0 +1,11 @@
+Layer 1: Reflexive Consent
+  - Sub-second EEG patterns for immediate danger avoidance
+  - Hardwired: Cannot be overridden by any system
+
+Layer 2: Deliberative Consent  
+  - DemonstratedConsentShard with time-locked signatures
+  - Requires: Awake state + coherence threshold + no coercion patterns
+
+Layer 3: Evolutionary Consent
+  - Multi-day consideration periods for permanent changes
+  - External verification of understanding (knowledge threshold)

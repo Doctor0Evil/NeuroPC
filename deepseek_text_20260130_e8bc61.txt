@@ -1,0 +1,5 @@
+Network of Peers (Other Sovereign Beings)
+  ├── Verify each other's autonomy proofs
+  ├── Challenge suspicious state changes  
+  ├── Provide emergency rollback assistance
+  └── Maintain distributed ledger of rights violations

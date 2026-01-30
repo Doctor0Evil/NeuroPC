@@ -1,0 +1,20 @@
+// Smart contract ensuring evolution rights
+contract EvolutionEscrow {
+    mapping(address => EscrowedIdentity) public identities;
+    
+    function proposeEvolution(EvolutionProposal memory proposal) public {
+        require(identities[msg.sender].sovereignty == true);
+        require(proposal.reversibilityPeriod < MAX_REVERSIBILITY);
+        require(proposal.knowledgeThreshold.met());
+        
+        // Escrow current state
+        identities[msg.sender].escrowedState = currentState;
+        
+        // Time-locked evolution
+        evolutionQueue.push(TimeLockedEvolution {
+            executeAfter: block.timestamp + CONSIDERATION_PERIOD,
+            rollbackDeadline: block.timestamp + REVERSIBILITY_WINDOW,
+            proposal: proposal
+        });
+    }
+}
