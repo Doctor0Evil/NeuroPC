@@ -5,6 +5,24 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+// Add an EVOLVE token and a separate RequiredToken variant.
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum AwarenessToken {
+    Query,
+    Commit,
+    Insight,
+    /// Explicit evolution consent (e.g., deep model/OS evolution).
+    Evolve,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RequiredToken {
+    Any,
+    Commit,
+    Evolve,
+}
+
 /// Awareness token semantics for consent.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AwarenessToken {
