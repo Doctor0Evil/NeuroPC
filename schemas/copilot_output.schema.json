@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Organic_CPU Copilot Output",
+  "description": "Safety-enveloped decision and eco summary for a chat-based AI orchestrator. The 'metadata' object is reserved for optional diagnostics and future extensions.",
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": [
+        "AllowFullAction",
+        "DegradePrecision",
+        "PauseAndRest"
+      ],
+      "description": "The safety-enveloped decision for the current interaction. Clients implement behavior based solely on this directive."
+    },
+    "eco": {
+      "type": "object",
+      "description": "Summary of ecological metrics for the session.",
+      "properties": {
+        "eco_impact_score": {
+          "type": "number",
+          "description": "Normalized environmental impact score of the session (lower is better)."
+        },
+        "device_hours": {
+          "type": "number",
+          "description": "Total hours the device has been in use during the session."
+        }
+      },
+      "required": ["eco_impact_score", "device_hours"]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional, non-breaking extension point for diagnostics and future adaptive policy signals. Clients should ignore unknown fields.",
+      "additionalProperties": {}
+    }
+  },
+  "required": ["decision", "eco"]
+}
