@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Organic_CPU Copilot Input",
+  "description": "Normalized bio-feedback metrics for a chat-based AI orchestrator. All semantic constraints (e.g., 0.0–1.0 ranges) must be enforced by the application layer.",
+  "properties": {
+    "bio_summary": {
+      "type": "object",
+      "description": "Summary of the user's current physiological, cognitive, and eco state.",
+      "properties": {
+        "fatigue_index": {
+          "type": "number",
+          "description": "Normalized fatigue index (0.0 = rested, 1.0 = maximal fatigue)."
+        },
+        "duty_cycle": {
+          "type": "number",
+          "description": "Normalized duty cycle of device interaction (0.0 = idle, 1.0 = maximal continuous use)."
+        },
+        "cognitive_load_index": {
+          "type": "number",
+          "description": "Normalized cognitive load index (0.0 = low load, 1.0 = overwhelmed)."
+        },
+        "intent_confidence": {
+          "type": "number",
+          "description": "Confidence in the interpreted user intent (0.0 = uncertain, 1.0 = certain)."
+        },
+        "eco_impact_score": {
+          "type": "number",
+          "description": "Normalized environmental impact score for the session (lower is better)."
+        },
+        "device_hours": {
+          "type": "number",
+          "description": "Total hours the device has been in use during the current session."
+        }
+      },
+      "required": [
+        "fatigue_index",
+        "duty_cycle",
+        "cognitive_load_index",
+        "intent_confidence",
+        "eco_impact_score",
+        "device_hours"
+      ]
+    }
+  },
+  "required": ["bio_summary"]
+}
