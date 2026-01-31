@@ -1,6 +1,38 @@
 use serde::{Deserialize, Serialize};
 use std::io::Write;
 use std::process::{Command, Stdio};
+use crate::automagic_paths::{
+    ORGANIC_CPU_CLI_BIN,
+    ORGANIC_CPU_PROFILES_DIR,
+    ORGANIC_CPU_DEFAULT_PROFILE_ID,
+    REALITY_OS_HOST_ID,
+};
+
+/// High-level, “just give me the 💡 hints” call for the main loop.
+pub fn reality_automagic_tick(
+    session_tag: &str,
+    fatigue_index: f32,
+    duty_cycle: f32,
+    cognitive_load_index: f32,
+    intent_confidence: f32,
+    eco_impact_score: f32,
+    device_hours: f32,
+) -> anyhow::Result<RealityHints> {
+    query_bio_feedback(
+        ORGANIC_CPU_CLI_BIN,
+        ORGANIC_CPU_PROFILES_DIR,
+        ORGANIC_CPU_DEFAULT_PROFILE_ID,
+        REALITY_OS_HOST_ID,
+        true,               // safe_mode: CHCIL-compliant by default
+        session_tag,
+        fatigue_index,
+        duty_cycle,
+        cognitive_load_index,
+        intent_confidence,
+        eco_impact_score,
+        device_hours,
+    )
+}
 
 /// JSON shape expected by organic_cpu_cli / ffi_json.
 #[derive(Clone, Debug, Serialize)]
