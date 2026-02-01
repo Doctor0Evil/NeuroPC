@@ -1,0 +1,12 @@
+[package]
+name = "organic_cpu_orchestrator"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Sovereignty-first orchestrator for OrganicCPU, exposing a safe CyberNano boot API."
+repository = "https://github.com/Doctor0Evil/NeuroPC"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+organiccpu_core = { path = "../organiccpu_core" }
+sovereignty_core = { path = "../sovereignty_core" }
