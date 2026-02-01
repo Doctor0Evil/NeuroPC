@@ -1,0 +1,10 @@
+[package]
+name = "cyberswarm_orchestrator"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+organiccpu_core = { path = "../organiccpu_core" }
+sovereignty_core = { path = "../sovereignty_core" }
