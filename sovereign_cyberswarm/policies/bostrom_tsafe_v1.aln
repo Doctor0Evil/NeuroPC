@@ -1,0 +1,96 @@
+# Bostrom Tsafe and RoH first-pass spec
+# All values are adjustable later via donutloop proposals.
+
+meta:
+  subject_id: "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+  version: "1.0.0"
+  description: "Tsafe control and Risk-of-Harm <= 0.3 invariants for sovereign cyberswarm."
+
+state_axes:
+  - name: "intensity"
+    range: [0.0, 1.0]
+  - name: "duty_cycle"
+    range: [0.0, 1.0]
+  - name: "cumulative_load"
+    range: [0.0, 1.0]
+  - name: "implant_power"
+    range: [0.0, 1.0]
+  - name: "neuromod_amplitude"
+    range: [0.0, 1.0]
+  - name: "cognitive_load"
+    range: [0.0, 1.0]
+  - name: "legal_complexity"
+    range: [0.0, 1.0]
+  - name: "lifeforce"
+    range: [0.0, 1.0]
+
+roH:
+  # Composite Risk-of-Harm estimator (initial weights; conservative).
+  weights:
+    intensity:         0.20
+    duty_cycle:        0.15
+    cumulative_load:   0.20
+    implant_power:     0.10
+    neuromod_amplitude:0.10
+    cognitive_load:    0.15
+    legal_complexity:  0.10
+  global_ceiling: 0.30
+
+cyber_modes:
+  - name: "Rehab"
+    kernel_id: "bostrom_rehab_v1"
+  - name: "Baseline"
+    kernel_id: "bostrom_baseline_v1"
+  - name: "Training"
+    kernel_id: "bostrom_training_v1"
+  - name: "Rest"
+    kernel_id: "bostrom_rest_v1"
+
+kernels:
+  # Each kernel is Ax <= b over the 8D state.
+  - id: "bostrom_baseline_v1"
+    description: "Daily baseline envelope."
+    A:
+      #    intensity duty cum  power neuromod cog  legal lifeforce
+      - [  1.0,     0.0, 0.0, 0.0,  0.0,   0.0, 0.0, 0.0 ]  # intensity <= 0.7
+      - [  0.0,     1.0, 0.0, 0.0,  0.0,   0.0, 0.0, 0.0 ]  # duty <= 0.5
+      - [  0.0,     0.0, 1.0, 0.0,  0.0,   0.0, 0.0, 0.0 ]  # cumulative <= 0.6
+      - [  0.0,     0.0, 0.0, 1.0,  0.0,   0.0, 0.0, 0.0 ]  # power <= 0.4
+      - [  0.0,     0.0, 0.0, 0.0,  1.0,   0.0, 0.0, 0.0 ]  # neuromod <= 0.5
+      - [  0.0,     0.0, 0.0, 0.0,  0.0,   1.0, 0.0, 0.0 ]  # cog <= 0.7
+      - [  0.0,     0.0, 0.0, 0.0,  0.0,   0.0, 1.0, 0.0 ]  # legal <= 0.6
+      - [  0.0,     0.0, 0.0, 0.0,  0.0,   0.0, 0.0,-1.0 ]  # -lifeforce <= -0.4 => lifeforce >= 0.4
+    b:
+      - 0.70
+      - 0.50
+      - 0.60
+      - 0.40
+      - 0.50
+      - 0.70
+      - 0.60
+      - -0.40
+
+tsafe:
+  selection:
+    description: >
+      Tsafe rejects any candidate action whose next-state projection leaves the
+      current mode's kernel. Among remaining candidates, it selects a Pareto-safe
+      action in CyberRank space (safety, legal, biomech, psych, rollback) using
+      user-configurable weights, but never accepts an action that increases RoH
+      or loosens envelope constraints.
+    cyberrank_axes:
+      - safety
+      - legal
+      - biomech
+      - psych
+      - rollback
+    default_weights:
+      safety:   0.35
+      legal:    0.20
+      biomech:  0.20
+      psych:    0.15
+      rollback: 0.10
+    invariants:
+      - "if x_t in K and action a chosen by Tsafe, then x_{t+1} in K"
+      - "RoH(x_{t+1}) <= RoH(x_t)"
+      - "no OTA update may increase global_ceiling"
