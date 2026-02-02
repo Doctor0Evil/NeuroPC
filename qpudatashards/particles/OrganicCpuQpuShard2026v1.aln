@@ -1,0 +1,26 @@
+schema_id, qpudatashard.qpu.v1
+subject_id, bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+version, 1.0.0
+
+# QPU metric definitions
+metric_name, kind,     min, max,   description
+coherence_index, scalar, 0.0, 1.0, "Normalized coherence of QPU-inspired models"
+decoherence_load, scalar, 0.0, 1.0, "Effective noise / instability load"
+eco_qpu_cost,    scalar, 0.0, 1.0, "Relative eco-impact of QPU batch"
+roh_contrib,     scalar, 0.0, 1.0, "Risk-of-Harm contribution from this shard"
+
+# Dream binding (logical link to BioState.dream fields)
+bind_field, metric_name, target
+dream_immersion, coherence_index, BioState.dream.dream_immersion
+lucidity_level,  coherence_index, BioState.dream.lucidity_level
+# etc…
+
+# Neurorights policy slice applied to these QPU/dream records
+policy.dream_state_sensitive, true
+policy.license,              "non-commercial"
+policy.forbid_decision_use,  "employment|housing|credit|insurance"
+policy.forget_sla_hours,     48
+policy.mental_privacy,       true
+policy.mental_integrity,     true
+policy.non_commercial,       true
+policy.soul_nontradeable,    true
