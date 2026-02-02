@@ -1,0 +1,35 @@
+meta:
+  version: 1.0.0
+  description: "Donutloop evolution ledger v1 – immutable, hash-linked evolution records."
+  kind: "donutloop_ledger"
+
+schema:
+  fields:
+    - name: "entry_id"
+      type: "string"
+    - name: "proposal_id"
+      type: "string"
+    - name: "policy_id"
+      type: "string"
+    - name: "decision"
+      type: "string"   # "Allowed" | "Rejected"
+    - name: "roh_before"
+      type: "f32"
+    - name: "roh_after"
+      type: "f32"
+    - name: "hexstamp"
+      type: "string"
+    - name: "prev_hash"
+      type: "string"
+    - name: "entry_hash"
+      type: "string"
+    - name: "evolve_stream_pointer"
+      type: "string"   # sovereignty/evolve/evolve-YYYYMMDD.evolve.jsonl:line
+    - name: "timestamp"
+      type: "string"
+
+invariants:
+  - name: "roh_monotone"
+    rule: "roh_after <= 0.30"
+  - name: "hash_linked"
+    rule: "entry_hash = H(prev_hash || proposal_id || decision || roh_after || hexstamp)"
