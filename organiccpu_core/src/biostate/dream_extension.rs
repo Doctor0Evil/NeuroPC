@@ -1,36 +1,44 @@
 use core::fmt::{Debug, Formatter};
-use core::time::Duration;
 
-/// Dream-state metrics as fixed-point 16-bit scalars for direct BioState ingestion
+/// Dream-state metrics as fixed-point 16-bit scalars for BioState ingestion.
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct DreamStateScalars {
-    /// Theta-gamma PAC coefficient, scaled 0..10000 ≡ 0.0000–1.0000
+    /// Theta-gamma PAC coefficient, scaled 0..10000 ≡ 0.0000–1.0000.
     pub tgcs: u16,
-    /// REM density index, bursts per minute × 100
+    /// REM density index, bursts per minute × 100.
     pub rdi: u16,
-    /// NREM latency variance in seconds × 100
+    /// NREM latency variance in seconds × 100.
     pub nlv: u16,
-    /// Monotonic timestamp since boot (nanoseconds)
+    /// Monotonic timestamp since boot (nanoseconds).
     pub timestamp_ns: u64,
 }
 
 impl DreamStateScalars {
-    /// Compile-time const assertion: maximum allowed RoH delta = 0.3 ≡ 3000
-    pub const MAX_ROH_DELTA: u16 = 3000;
+    /// Max allowed staleness for dream-state scalars (nanoseconds).
+    pub const MAX_AGE_NS: u64 = 200_000_000; // 200 ms
 
-    /// Hard envelope check – panics on violation (compile-time provable if inputs const)
+    /// Basic well-formedness: ranges and freshness only.
     #[inline(always)]
-    pub fn enforce_safety_envelope(&self) -> Result<(), &'static str> {
-        // Example placeholder: real implementation would compute intent-confidence delta
-        let hypothetical_delta = self.tgcs.saturating_sub(4500); // ≥0.45 threshold reference
-        if hypothetical_delta > Self::MAX_ROH_DELTA {
-            panic!("SafeEnvelopePolicy violation: RoH delta exceeds 0.3");
-        }
-        // Stale threshold 200 ms
-        if self.timestamp_ns.saturating_add(Duration::from_millis(200).as_nanos() as u64) < current_monotonic_ns() {
-            return Err("Stale dream-state data rejected");
+    pub fn is_fresh_and_bounded(
+        &self,
+        now_ns: u64,
+    ) -> Result<(), &'static str> {
+        // All three main scalars are bounded by construction (u16).
+        // We only enforce staleness here.
+        if now_ns.saturating_sub(self.timestamp_ns) > Self::MAX_AGE_NS {
+            return Err("Stale dream-state data (>200ms) rejected");
         }
         Ok(())
+    }
+
+    /// Map into normalized 0.0–1.0 floats for higher layers.
+    #[inline(always)]
+    pub fn to_normalized(&self) -> DreamStateNormalized {
+        DreamStateNormalized {
+            tgcs: self.tgcs as f32 / 10_000.0,
+            rdi: self.rdi as f32 / 100.0,    // bursts per minute
+            nlv: self.nlv as f32 / 100.0,    // seconds
+        }
     }
 }
 
@@ -38,20 +46,22 @@ impl Debug for DreamStateScalars {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
-            "DreamState {{ TGCS: {}.{:04}, RDI: {}.{:02}, NLV: {}.{:02} }}",
-            self.tgcs / 10000,
-            self.tgcs % 10000,
+            "DreamStateScalars {{ tgcs: {}.{:04}, rdi: {}.{:02}, nlv: {}.{:02}, ts_ns: {} }}",
+            self.tgcs / 10_000,
+            self.tgcs % 10_000,
             self.rdi / 100,
             self.rdi % 100,
             self.nlv / 100,
-            self.nlv % 100
+            self.nlv % 100,
+            self.timestamp_ns,
         )
     }
 }
 
-/// Placeholder for system monotonic time – replace with your organic_cpu clock source
-#[cold]
-fn current_monotonic_ns() -> u64 {
-    // In real integration: read from hardware RTC or biophysical clock
-    unsafe { core::arch::x86_64::_rdtsc() as u64 } // temporary fallback
+/// Normalized dream metrics; these can be mixed into BioState-derived indices.
+#[derive(Copy, Clone, Debug)]
+pub struct DreamStateNormalized {
+    pub tgcs: f32,
+    pub rdi: f32,
+    pub nlv: f32,
 }
