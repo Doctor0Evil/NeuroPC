@@ -1,0 +1,9 @@
+# role_id,subject_id,bostrom_address,role_kind,can_veto,can_init_evolve,required_for_lifeforce,required_for_arch_change
+host_primary,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7, \
+  bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7,Host,true,true,true,true
+organic_cpu,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7, \
+  zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8,OrganicCPU,true,true,true,true
+research_agent_local,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7, \
+  0x519fC0eB4111323Cac44b70e1aE31c30e405802D,ResearchAgent,false,true,false,true
+off_device_swarm,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7, \
+  bostrom1ldgmtf20d6604a24ztr0jxht7xt7az4jhkmsrc,OffDeviceSwarm,false,false,false,false
