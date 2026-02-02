@@ -1,0 +1,7 @@
+metric,alpha,sign
+hrv_norm,0.05,positive
+rem_density_norm,0.04,positive
+sws_quality_norm,0.04,positive
+dream_entropy_norm,0.02,positive
+stress_load_norm,0.03,negative
+roh_local_norm,0.03,negative
