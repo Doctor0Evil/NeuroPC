@@ -1,0 +1,58 @@
+meta:
+  subject_id: bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  stake_id: bostrom-stake-v1
+  description: >
+    Stakeholder roles and governance scopes for sovereign OrganicCPU/NeuroPC
+    shell. Exactly one Host; multi-sig required for lifeforce and arch_change.
+
+roles:
+  - kind: Host
+    role_id: host-primary
+    bostrom_address: bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+    min_signers: 1
+    max_signers: 1
+
+  - kind: OrganicCPU
+    role_id: organiccpu-core
+    bostrom_address: zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8
+    min_signers: 1
+    max_signers: 3
+
+  - kind: ResearchAgent
+    role_id: research-agent-1
+    bostrom_address: 0x519fC0eB4111323Cac44b70e1aE31c30e405802D
+    min_signers: 0
+    max_signers: 3
+
+scopes:
+  - scope_id: lifeforce_alteration
+    description: Changes to lifeforce envelopes or integrity/chi budgets.
+    required_roles:
+      - Host
+      - OrganicCPU
+    token_kinds_allowed:
+      - EVOLVE
+    multisig_required: true
+
+  - scope_id: arch_change
+    description: Core kernel architecture and sovereigntycore behavior.
+    required_roles:
+      - Host
+      - OrganicCPU
+      - ResearchAgent
+    token_kinds_allowed:
+      - EVOLVE
+    multisig_required: true
+
+  - scope_id: day_to_day_tuning
+    description: Motor macros, language style, and routine heuristic tweaks.
+    required_roles:
+      - Host
+    token_kinds_allowed:
+      - SMART
+      - EVOLVE
+    multisig_required: false
+
+invariants:
+  exactly_one_host_per_subject: true
+  lifeforce_and_arch_require_multisig: true
