@@ -1,0 +1,224 @@
+{
+  "type": "risk_model",
+  "id": "bostrom-rohmodel-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "file_ref": "qpudatashards/particles/bostrom-rohmodel-v1.rohmodel.aln",
+  "global_roh_ceiling": 0.3,
+  "axes": [
+    { "name": "thermal_load",      "weight": 0.15, "min": 0.0, "max": 1.0 },
+    { "name": "cognitive_load",    "weight": 0.20, "min": 0.0, "max": 1.0 },
+    { "name": "fatigue_index",     "weight": 0.20, "min": 0.0, "max": 1.0 },
+    { "name": "inflammation",      "weight": 0.10, "min": 0.0, "max": 1.0 },
+    { "name": "eco_impact",        "weight": 0.10, "min": 0.0, "max": 1.0 },
+    { "name": "dream_load",        "weight": 0.10, "min": 0.0, "max": 1.0 },
+    { "name": "lifeforce_drain",   "weight": 0.15, "min": 0.0, "max": 1.0 }
+  ],
+  "invariants": {
+    "roh_ceiling_leq": 0.3,
+    "weights_non_negative": true,
+    "weights_sum_leq": 1.0
+  }
+}
+{
+  "type": "stake_schema",
+  "id": "bostrom-stake-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "file_ref": "qpudatashards/particles/bostrom-stake-v1.stake.aln",
+  "roles": [
+    { "kind": "Host",        "min_signers": 1, "max_signers": 1 },
+    { "kind": "OrganicCPU",  "min_signers": 1, "max_signers": 3 },
+    { "kind": "ResearchAgent","min_signers": 0, "max_signers": 3 }
+  ],
+  "scopes": [
+    {
+      "scope_id": "lifeforce_alteration",
+      "description": "Changes to lifeforce envelopes or integrity/chi budgets",
+      "required_roles": [ "Host", "OrganicCPU" ],
+      "token_kinds_allowed": [ "EVOLVE" ],
+      "multisig_required": true
+    },
+    {
+      "scope_id": "arch_change",
+      "description": "Core kernel architecture, sovereigntycore behavior, RoH model",
+      "required_roles": [ "Host", "OrganicCPU", "ResearchAgent" ],
+      "token_kinds_allowed": [ "EVOLVE" ],
+      "multisig_required": true
+    },
+    {
+      "scope_id": "day_to_day_tuning",
+      "description": "Motor macros, language style, local heuristics",
+      "required_roles": [ "Host" ],
+      "token_kinds_allowed": [ "SMART", "EVOLVE" ],
+      "multisig_required": false
+    }
+  ],
+  "invariants": {
+    "exactly_one_host_per_subject": true,
+    "lifeforce_and_arch_require_multisig": true
+  }
+}
+{
+  "type": "neurorights_policy",
+  "id": "bostrom-neurorights-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "file_ref": "sovereignty/policies/bostrom-neurorights-v1.neurorights.json",
+  "dreamstate": {
+    "dream_sensitive": true,
+    "max_retention_hours": 48,
+    "storage_scope": [ "local_vault_only" ],
+    "forbiddecisionuse": [ "employment", "housing", "credit", "insurance" ]
+  },
+  "rights": {
+    "mental_privacy": true,
+    "mental_integrity": true,
+    "cognitive_liberty": true,
+    "non_commercial_neural_data": true
+  },
+  "enforcement": {
+    "pre_access_guard": true,
+    "ota_update_guard": true,
+    "log_violations_to_donutloop": true
+  }
+}
+{
+  "type": "token_policy",
+  "id": "bostrom-token-policy-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "ev_ctrl": {
+    "roh_monotone_safety": true,
+    "roh_after_leq_before": true,
+    "roh_after_leq_ceiling": 0.3
+  },
+  "tokens": [
+    {
+      "kind": "EVOLVE",
+      "description": "Major architectural or irreversible changes",
+      "max_effectsize_l2": 0.10,
+      "allowed_scopes": [ "arch_change", "lifeforce_alteration" ],
+      "integration_depth": "structural",
+      "requires_multisig": true
+    },
+    {
+      "kind": "SMART",
+      "description": "Day-to-day adaptation within strict envelopes",
+      "max_effectsize_l2": 0.02,
+      "allowed_scopes": [ "day_to_day_tuning" ],
+      "integration_depth": "behavioral",
+      "requires_multisig": false
+    }
+  ]
+}
+{
+  "type": "evolve_stream_spec",
+  "id": "bostrom-evolve-stream-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "file_pattern": "sovereignty/evolve/evolution-proposals-*.evolve.jsonl",
+  "record_type": "EvolutionProposalRecord",
+  "required_fields": [
+    "proposal_id",
+    "kind",
+    "scope",
+    "effect_bounds",
+    "roh_before",
+    "roh_after",
+    "token_kind",
+    "signatures",
+    "decision"
+  ],
+  "invariants": {
+    "roh_after_leq_before": true,
+    "effect_bounds_non_negative": true,
+    "must_have_decision_status": [ "Allowed", "Rejected", "Deferred" ]
+  }
+}
+{
+  "type": "donutloop_ledger_spec",
+  "id": "bostrom-donutloop-ledger-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "file_ref": "logs/donutloopledger.aln",
+  "row_schema": {
+    "fields": [
+      "entry_id",
+      "proposal_id",
+      "decision",
+      "roh_before",
+      "roh_after",
+      "hexstamp",
+      "prev_hexstamp",
+      "policy_refs",
+      "timestamp"
+    ]
+  },
+  "hashing": {
+    "algorithm": "sha256",
+    "hex_field": "hexstamp",
+    "prev_hex_field": "prev_hexstamp"
+  },
+  "invariants": {
+    "prev_hexstamp_required_after_genesis": true,
+    "decision_in": [ "Allowed", "Rejected", "Deferred" ]
+  }
+}
+{
+  "type": "sovereignty_guard_pipeline",
+  "id": "bostrom-sovereigntycore-pipeline-v1",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "modules": [
+    {
+      "order": 1,
+      "name": "parse_proposal",
+      "source": "organiccpualn::evolve_stream",
+      "input": "EvolutionProposalRecord",
+      "failure_decision": "Rejected"
+    },
+    {
+      "order": 2,
+      "name": "load_policies",
+      "source": "organiccpualn::{roh_model,stake}",
+      "artifacts": [
+        "bostrom-rohmodel-v1.rohmodel.aln",
+        "bostrom-stake-v1.stake.aln",
+        "bostrom-neurorights-v1.neurorights.json"
+      ],
+      "failure_decision": "Rejected"
+    },
+    {
+      "order": 3,
+      "name": "roh_guard",
+      "source": "sovereigntycore::roh_guard",
+      "checks": [ "roh_after_leq_before", "roh_after_leq_ceiling" ],
+      "on_violation": "Rejected"
+    },
+    {
+      "order": 4,
+      "name": "neurorights_guard",
+      "source": "sovereigntycore::neurorights_guard",
+      "checks": [ "dream_sensitive", "forbiddecisionuse" ],
+      "on_violation": "Rejected"
+    },
+    {
+      "order": 5,
+      "name": "stake_guard",
+      "source": "sovereigntycore::stake_guard",
+      "checks": [ "multi_sig_quorum", "role_scope_match" ],
+      "on_violation": "Rejected"
+    },
+    {
+      "order": 6,
+      "name": "token_guard",
+      "source": "sovereigntycore::token_guard",
+      "checks": [ "effectsize_vs_token", "scope_vs_token_kind" ],
+      "on_violation": "Rejected_or_Escalate"
+    },
+    {
+      "order": 7,
+      "name": "record_decision",
+      "source": "organiccpualn::{evolve_stream,donutloop_ledger}",
+      "side_effects": [ "append_evolve_jsonl", "append_donutloop_ledger" ]
+    }
+  ],
+  "invariants": {
+    "no_execution_before_all_guards_pass": true,
+    "atomic_log_and_decision": true
+  }
+}
