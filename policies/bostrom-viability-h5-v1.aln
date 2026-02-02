@@ -1,0 +1,21 @@
+# n = 6, m = 5
+
+# Row 1: RoH slice ≤ 0.3  (x6 ≤ 0.3)
+A1 = [0, 0, 0, 0, 0, 1]
+b1 = 0.3
+
+# Row 2: minimum HRV quality (x1 ≥ 0.4  →  -x1 ≤ -0.4)
+A2 = [-1, 0, 0, 0, 0, 0]
+b2 = -0.4
+
+# Row 3: minimum SWS quality (x3 ≥ 0.4 → -x3 ≤ -0.4)
+A3 = [0, 0, -1, 0, 0, 0]
+b3 = -0.4
+
+# Row 4: max stress load (x5 ≤ 0.5)
+A4 = [0, 0, 0, 0, 1, 0]
+b4 = 0.5
+
+# Row 5: combined sleep sufficiency (0.5 x2 + 0.5 x3 ≥ 0.5 → -0.5x2 -0.5x3 ≤ -0.5)
+A5 = [0, 0, -0.5, 0, 0, 0]
+b5 = -0.5
