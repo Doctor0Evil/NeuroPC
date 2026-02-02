@@ -1,0 +1,9 @@
+{"proposal_id":"qpolicy-20260202-0001",
+ "kind":"QPolicyUpdate",
+ "inputs":{"module":"organiccpuqlearn","profile":"bostrom-evolution-qlearn-v1"},
+ "effect_bounds":{"l2_delta_norm":0.03,"irreversible":false},
+ "roh_before":0.18,
+ "roh_after":0.21,
+ "decision":"Allowed",
+ "hexstamp":"0xNP09",
+ "timestamp":"2026-02-02T07:00:00Z"}
