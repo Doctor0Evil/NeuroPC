@@ -1,0 +1,6 @@
+# qpudatashards/particles/bostrom-rohmodel-v1.rohmodel.aln
+model_id,version,active,roh_ceiling,axes,weights,bias
+bostrom_roh_main_v1,1.0.0,true,0.30,
+"fatigue,inflammation,cognitive_load,eco_impact,legal_complexity,dreamload",
+"0.25,0.20,0.20,0.10,0.15,0.10",
+0.05
