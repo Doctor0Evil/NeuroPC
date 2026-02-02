@@ -1,0 +1,35 @@
+section,field,datatype,domain,required,description
+META,shardid,string,,true,Unique 64-bit hex-stamp ID for this shard (0xID)
+META,version,string,,true,Semantic version e.g. 1.0.0
+META,subjectid,string,,true,Bostrom DID / address
+META,created_utc,timestamp,,true,Creation time (UTC)
+META,jurisdiction,string,,true,Primary legal regime tags (e.g. US-CO, UNESCO-Neuro)
+
+ALN,payload_uri,string,,true,Pointer to richer ALN/JSON payload (if any)
+ALN,payload_hash,string,,true,Hex hash of payload for integrity
+
+BIOSTATE,dim,u32,>=1,true,Dimension d of BioState vector
+BIOSTATE,bio_state_bits,string,[0,1]^d,true,Binary string representation of {0,1}^d
+BIOSTATE,roh_ceiling,f32,[0.0,0.3],true,RoH ceiling for this shard (must be ≤ 0.3)
+BIOSTATE,monotone_envelope_min,f32,[0.0,1.0],true,Lower bound of envelope
+BIOSTATE,monotone_envelope_max,f32,[0.0,1.0],true,Upper bound (== RoH ceiling for this shard)
+
+PROXY,hrv_norm,f32,[0.0,1.0],true,Normalized HRV proxy
+PROXY,rem_density_norm,f32,[0.0,1.0],true,REM density proxy
+PROXY,sws_quality_norm,f32,[0.0,1.0],true,SWS / deep-sleep quality
+PROXY,dream_entropy_norm,f32,[0.0,1.0],true,Dream recall entropy proxy
+PROXY,stress_load_norm,f32,[0.0,1.0],true,Sympathetic load proxy
+
+VIABILITY,row_count,u32,>=1,true,Number of rows in A
+VIABILITY,col_count,u32,>=1,true,Number of columns in A (== n for x∈[0,1]^n)
+VIABILITY,A_flat,string,,true,Row-major flattened matrix A as CSV of floats
+VIABILITY,b_vec,string,,true,Vector b as CSV of floats
+
+CONSENT,token_gate,string,,true,EVOLVE|SMART|NONE
+CONSENT,requires_revocation,bool,,true,Whether revocable at user request
+CONSENT,erasure_scope,string,,true,neuro-object|session|shard|global
+CONSENT,session_erase_after_sec,u64,,true,Maximum time before auto-erase trigger
+
+AUDIT,hexstamp,string,,true,Hex hash over all fields (immutability)
+AUDIT,prev_hexstamp,string,,false,Hash of previous ledger entry if chained
+AUDIT,log_uri,string,,true,Pointer into donutloopledger.aln entry
