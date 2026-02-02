@@ -1,0 +1,7 @@
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+bincode = "2.0.0-rc.3"
+sha2 = "0.10"
+ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+getrandom = { version = "0.2", features = ["std"] }
+thiserror = "1.0"
