@@ -1,0 +1,123 @@
+version 2026.02.02
+hextag 0xGUEST-CYBERSWARM-POLICY-0001
+
+description
+  Sovereignty-core policy for guest cyberswarm runtimes. All swarms are
+  strictly subordinate to OrganicCPU/NeuroPC sovereignty shells and may
+  only operate through the SovereignCyberswarmShell Rust ABI.
+
+modes
+  # Pure observation mode: safe in most contexts, but still subject
+  # to neurorights and stake policies (e.g., no observation in blocked
+  # mental-privacy corridors).
+  - id Observe
+    maxrohband 0x30
+    allowevolution false
+    tokengroups []
+    notes >
+      Guest swarms may read summarized BioState and corridors but
+      cannot propose actuation or evolution.
+
+  # Safe filtering only: suggestion of filters (block/mute/rank) on
+  # external content. No OrganicCPU-facing evolution.
+  - id SafeFilterOnly
+    maxrohband 0x30
+    allowevolution false
+    tokengroups [SMART]
+    notes >
+      Used for abuse/spam filtering, routing, and non-biophysical
+      risk mitigation under neurorights-aware PromptEnvelopes.
+
+  # Safe filtering plus bounded evolution proposals: only allowed when
+  # RoH is strictly below 0.30 and monotone safety can be enforced.
+  - id SafeFilterPlusEvolution
+    maxrohband 0x2F
+    allowevolution true
+    tokengroups [SMART]
+    notes >
+      Swarm may propose MicroEpoch-style evolution steps under
+      RoH ≤ 0.3 and ΔRoH ≤ 0, subject to neurorights, stake,
+      and EVOLVE/SMART policies. No direct actuation allowed.
+
+neurorights
+  # Neurorights profiles define where and how guest swarms may run.
+  profiles
+    - id default-neurorights-v1
+      allowmodes [Observe, SafeFilterOnly, SafeFilterPlusEvolution]
+      forbiddenusecases [employment, housing, credit]
+      mentalprivacy
+        allowrawdream false
+        allowcorridorids true
+      cognitiveintegrity
+        forbidcoerciveprompts true
+        forbidforceddowngrades true
+      cognitiveliberty
+        requirehostoptin true
+      notes >
+        Default profile for self-sovereign hosts. Guest swarms must
+        never see raw dream telemetry or sub-dissociated corridor
+        traces; they only receive summarized BioState and corridor IDs.
+
+stake
+  # Stake role requirements per mode.
+  roles
+    - id SwarmGuest
+      description Guest cyberswarm runtime.
+      musthave
+        - Host
+        - OrganicCPU
+      notes >
+        SwarmGuest is not an independent authority; its keys and
+        operations are bound to the Host + OrganicCPU roles.
+
+  modematrix
+    - mode Observe
+      allowedroles [SwarmGuest]
+      requiremultisig []
+    - mode SafeFilterOnly
+      allowedroles [SwarmGuest]
+      requiremultisig []
+    - mode SafeFilterPlusEvolution
+      allowedroles [SwarmGuest]
+      requiremultisig [Host, OrganicCPU]
+      notes >
+        Evolution proposals emitted in this mode may only be accepted
+        when Host + OrganicCPU multisig is present, and when EVOLVE/
+        SMART policies for the host permit evolution.
+
+rohconstraints
+  # RoH envelope for guest swarms, referencing .rohmodel.aln
+  ceiling 0.30
+  monotonesafety true
+  notes >
+    SovereignEvolutionWrapper::from_swarm MUST enforce that any
+    predicted RoH for a swarm-suggested protocol is ≤ roh_before
+    and ≤ 0.30, otherwise the proposal is dropped and a donutloop
+    denial entry is recorded.
+
+donutloop
+  # Logging requirements for swarm ticks.
+  requiredentries
+    - kind swarm_denied_mode
+    - kind swarm_denied_roh
+    - kind swarm_denied_stake
+    - kind swarm_recommend_info
+    - kind swarm_suggest_filter
+    - kind swarm_proposed_evolution
+    - kind swarm_denied_evolution_wrong_mode
+    - kind swarm_denied_evolution_roh_guard
+  notes >
+    Every swarm tick must emit at least one donutloop entry,
+    making swarm behavior auditable. Evolution proposals must
+    ALWAYS be reflected as swarm_proposed_evolution or one of
+    the denial variants.
+
+jurisdiction
+  strictestwins true
+  notes >
+    When multiple jurisdictional profiles apply, the most
+    protective neurorights and RoH rules MUST be enforced for
+    guest swarms. Local-only and offshore tunnels cannot
+    weaken protections below the host's personal baseline.
+
+hexstamp 0x7AC1-3FE2-9B04-51D7
