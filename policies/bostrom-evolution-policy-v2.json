@@ -1,0 +1,9 @@
+{
+  "id": "bostrom-evolution-policy-v2",
+  "highrisk_research": {
+    "allowed": true,
+    "max_pain_vas": 6.0,
+    "max_cognitive_load": 0.5,
+    "forbid_dreammetrics_unless_explicit": true
+  }
+}
