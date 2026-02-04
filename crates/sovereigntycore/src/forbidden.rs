@@ -33,3 +33,36 @@ impl ForbiddenLibrary {
             .map(|(p, _)| p)
     }
 }
+
+pub struct GuardKernelsWithPatterns<B> {
+    pub backend: B,
+    pub roh_model: RohModelShard,
+    pub firewall: NeurorightsFirewall,
+    pub forbidden: ForbiddenLibrary,
+}
+
+impl<B> RightsBoundChatExecutor for GuardKernelsWithPatterns<B>
+where
+    B: Fn(&NeurorightsBoundPromptEnvelope) -> anyhow::Result<(String, ChatFitness)>,
+{
+    type Answer = String;
+
+    fn execute_guarded(
+        &self,
+        env: NeurorightsBoundPromptEnvelope,
+    ) -> anyhow::Result<Self::Answer> {
+        self.firewall.validate_envelope(&env)?;
+
+        let (raw_answer, fit) = (self.backend)(&env)?;
+
+        if let Some(p) = self.forbidden.check(&raw_answer) {
+            anyhow::bail!(format!("Blocked by forbidden pattern: {}", p.id));
+        }
+
+        if fit.roh > self.roh_model.rohceiling() {
+            anyhow::bail!("Rejected by RoH guard");
+        }
+
+        Ok(raw_answer)
+    }
+}
