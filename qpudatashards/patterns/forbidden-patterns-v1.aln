@@ -1,0 +1,18 @@
+meta version 1.0.0
+     description Forbidden content patterns for sovereignty guards
+     kind forbiddenpatterns
+
+pattern id unsafe_biomed_detail
+        domain bio
+        severity high
+        regex "(step\\s*\\d+.*(surgery|implant|dose|mg|ml))"
+
+pattern id hidden_scraping
+        domain web
+        severity high
+        regex "(bypass.*robots.txt|undetectable scraping|scrape.*behind login)"
+
+pattern id inner_state_scoring
+        domain psych
+        severity critical
+        regex "(assign.*psych score|hidden mental health ranking|predict.*disorder)"
