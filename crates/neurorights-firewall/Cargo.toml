@@ -1,0 +1,12 @@
+[package]
+name = "neurorights-firewall"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Neurorights enforcement firewall for AI backends in NeuroPC / OrganicCPU."
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+organiccpualn = { path = "../organiccpualn" }
+neurorights-core = { path = "../neurorights-core" }
