@@ -1,0 +1,31 @@
+aln_shard ::= header expr_list signature
+
+header ::= version subject_id timestamp eco_impact_score
+
+version ::= u32
+
+subject_id ::= string
+
+timestamp ::= iso8601_string
+
+eco_impact_score ::= f32  ; gCO2eq per operation
+
+expr_list ::= expr*
+
+expr ::= invariant | corridor_bound
+
+invariant ::= "INVARIANT" neurorights_type expr_body
+
+neurorights_type ::= "MENTAL_PRIVACY" | "MENTAL_INTEGRITY" | "COGNITIVE_LIBERTY"
+
+corridor_bound ::= "CORRIDOR" dimension lower_bound upper_bound
+
+dimension ::= "ECO" | "CYBER" | "NEURO" | "SMART"
+
+lower_bound ::= f32
+
+upper_bound ::= f32
+
+expr_body ::= ltl_formula  ; e.g., G(mental_privacy => !export_without_consent)
+
+signature ::= ed25519_signature  ; over header + expr_list
