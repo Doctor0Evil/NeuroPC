@@ -1,0 +1,32 @@
+{
+  "$schema": "https://neuro.pc/schemas/research-autonomy-manifest.schema.json",
+  "type": "object",
+  "required": ["date", "subject_id", "autonomy_graph", "evidence_bundles", "per_turn_profile"],
+  "properties": {
+    "date": { "type": "string", "format": "date" },
+    "subject_id": { "type": "string" },
+    "autonomy_graph": {
+      "type": "array",
+      "items": { "type": "string" }  // ALN shard IDs
+    },
+    "evidence_bundles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "enum": ["ECO_IMPACT", "NEURORIGHTS_COMPLIANCE", "ROLLBACK_PROOF"] },
+          "data": { "type": "object" }
+        }
+      }
+    },
+    "per_turn_profile": {
+      "type": "object",
+      "properties": {
+        "power_token_ref": { "type": "string" },
+        "morph_token_ref": { "type": "string" },
+        "corridor_math_invariants": { "type": "array", "items": { "type": "string" } }  // ALN exprs
+      }
+    }
+  },
+  "additionalProperties": false
+}
