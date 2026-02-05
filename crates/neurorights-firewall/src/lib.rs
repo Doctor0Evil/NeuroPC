@@ -1,5 +1,47 @@
-use neurorights_core::{NeurorightsBoundPromptEnvelope, CybostateClass};
-use organiccpualn::NeurorightsPolicyDocument; // your existing policy type
+use thiserror::Error;
+
+use organiccpualn::prompt_envelope::NeurorightsBoundPromptEnvelope;
+use neurorights_core::{guard_prompt_tool, NeurorightsPolicyDocument, ToolCapability, NeurorightsViolation};
+
+/// Backend-specific error wrapper.
+#[derive(Debug, Error)]
+pub enum FirewallError {
+    #[error("neurorights violation: {0}")]
+    Neurorights(#[from] NeurorightsViolation),
+
+    #[error("backend error: {0}")]
+    Backend(String),
+}
+
+/// Trait that any backend (LLM, tool router) must implement.
+/// Critically: it never sees a raw String, only a vetted envelope.
+pub trait NeurorightsSafeBackend {
+    type Response;
+
+    fn handle_envelope(
+        &self,
+        envelope: &NeurorightsBoundPromptEnvelope,
+    ) -> Result<Self::Response, String>;
+}
+
+/// Main firewall entrypoint:
+/// - loads neurorights policy (caller supplies doc)
+/// - runs guard_prompt_tool
+/// - forwards envelope to backend only if allowed.
+pub fn process_prompt<B: NeurorightsSafeBackend>(
+    backend: &B,
+    env: &NeurorightsBoundPromptEnvelope,
+    policy: &NeurorightsPolicyDocument,
+    tool: &ToolCapability,
+) -> Result<B::Response, FirewallError> {
+    // Enforce neurorights at type level.
+    guard_prompt_tool(env, policy, tool)?;
+
+    // If we reach here, the request is neurorights-clean for this tool.
+    backend
+        .handle_envelope(env)
+        .map_err(FirewallError::Backend)
+}
 
 #[derive(Debug)]
 pub enum NeurorightsViolation {
