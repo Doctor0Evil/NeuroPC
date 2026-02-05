@@ -1,0 +1,40 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: evidencebundles.neuro.pc
+spec:
+  group: neuro.pc
+  scope: Namespaced
+  names:
+    kind: EvidenceBundle
+    plural: evidencebundles
+    singular: evidencebundle
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            required: ["subjectId", "preEnvelopeRef", "postEnvelopeRef"]
+            properties:
+              subjectId:
+                type: string
+              preEnvelopeRef:
+                type: string
+              postEnvelopeRef:
+                type: string
+              rohEstimates:
+                type: array
+                items:
+                  type: number
+                  format: float
+              simulationLogs:
+                type: array
+                items:
+                  type: string    # .ocpulog URLs/paths
+    subresources:
+      status: {}
