@@ -1,0 +1,59 @@
+{
+  "$schema": "https://neuro.pc/schemas/morph_token.schema.json",
+  "type": "object",
+  "required": ["id", "subject_id", "dimensions", "valid_from", "valid_until", "revocable", "eco_impact_guard"],
+  "properties": {
+    "id": { "type": "string" },
+    "subject_id": { "type": "string" },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "eco": {
+          "type": "object",
+          "properties": {
+            "max_kwh_inference": { "type": "number", "maximum": 0.12 },
+            "grid_intensity_threshold_gco2_kwh": { "type": "number", "maximum": 400 }
+          },
+          "required": ["max_kwh_inference"]
+        },
+        "cyber": {
+          "type": "object",
+          "properties": {
+            "max_latency_ms": { "type": "number", "maximum": 50 },
+            "max_thermal_dissipation_w": { "type": "number", "maximum": 1.8 }
+          },
+          "required": ["max_latency_ms"]
+        },
+        "neuro": {
+          "type": "object",
+          "properties": {
+            "max_atp_per_synapse": { "type": "number", "maximum": 100000 },
+            "spike_density_corridor": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+          },
+          "required": ["max_atp_per_synapse"]
+        },
+        "smart": {
+          "type": "object",
+          "properties": {
+            "max_inference_latency_ms": { "type": "number", "maximum": 20 },
+            "core_temp_max_c": { "type": "number", "maximum": 42 }
+          },
+          "required": ["max_inference_latency_ms"]
+        }
+      },
+      "required": ["eco", "cyber", "neuro", "smart"]
+    },
+    "valid_from": { "type": "string", "format": "date-time" },
+    "valid_until": { "type": "string", "format": "date-time" },
+    "revocable": { "type": "boolean" },
+    "eco_impact_guard": {
+      "type": "object",
+      "properties": {
+        "embodied_energy_max_mj": { "type": "number" },
+        "carbon_aware_scheduling": { "type": "boolean" }
+      },
+      "required": ["carbon_aware_scheduling"]
+    }
+  },
+  "additionalProperties": false
+}
