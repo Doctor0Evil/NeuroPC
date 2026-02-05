@@ -1,0 +1,52 @@
+meta
+  manifest_id     neuro-workspace-v1
+  subject_id      bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+  description     NeuroPC / OrganicCPU sovereign shell manifest for this repo.
+  version         1.0.0
+
+paths
+  qpudata_root    qpudatashards/particles
+  policies_root   policies
+  logs_root       logs
+  crates_root     crates
+
+core_shards
+  rohmodel        qpudatashards/particles/bostrom-rohmodel-v1.rohmodel.aln
+  stake           qpudatashards/particles/bostrom-stake-v1.stake.aln
+  neurorights     policies/bostrom-neurorights-v1.neurorights.json
+  smart_policy    policies/bostrom-smart-2026-01.smart.json
+  evolve_stream   qpudatashards/particles/evolution-proposals.evolve.jsonl
+  donutloop       logs/donutloopledger.aln
+
+organic_cpu
+  profile         organicspecs/OrganicCpuNeuroProfile2026v1.ocpu
+  envelope        organicspecs/OrganicCpuPainEnvelope2026v1.ocpuenv
+  runtime_log     qpudatashards/particles/OrganicCpuRuntimeMetrics2026v1.aln
+  qpu_shard       qpudatashards/particles/OrganicCpuQpuShard2026v1.aln
+
+invariants
+  roh_ceiling     0.30
+  roh_monotone    true      # require RoH_after <= RoH_before for Allowed decisions
+  env_monotone    true      # envelopes may tighten but not loosen
+  dream_nocomm    true      # dream-state data non-commercial, non-advertising use
+  nondiscriminate true      # forbid dream/neural data in employment/housing/credit/insurance
+
+stake_requirements
+  lifeforce_scope
+    required_roles Host, OrganicCPU
+    token_kinds    EVOLVE
+  arch_scope
+    required_roles Host, OrganicCPU, ResearchAgent
+    token_kinds    EVOLVE
+  tuning_scope
+    required_roles Host
+    token_kinds    SMART, EVOLVE
+
+guard_pipeline
+  order
+    1 stake_guard
+    2 neurorights_guard
+    3 roh_guard
+    4 envelope_guard
+    5 token_guard
+    6 log_to_evolve_and_donutloop
