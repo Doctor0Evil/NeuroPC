@@ -10,19 +10,26 @@ pub struct EffectBounds {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EvolutionProposalRecord {
-    pub proposal_id: String,
-    pub subject_id: String,
+    pub proposalid: String,
+    pub subjectid: String,
     pub kind: String,
     pub module: String,
-    pub update_kind: String,
-    pub effect_bounds: EffectBounds,
-    pub roh_before: f32,
-    pub roh_after: f32,
-    pub tsafe_mode: String,
-    pub domain_tags: Vec<String>,
+    pub updatekind: String,
+    pub effectbounds: EffectBounds,
+    pub rohbefore: f32,
+    pub rohafter: f32,
+    pub tsafemode: String,
+    pub domaintags: Vec<String>,
     pub decision: String,
     pub hexstamp: String,
-    pub timestamp_utc: String,
+    pub timestamputc: String,
+
+    /// NEW: reference to the prompt envelope that triggered this proposal.
+    pub prompt_envelope_id: Option<String>,
+
+    /// NEW: neurorights profile and token that governed this proposal.
+    pub neurorights_profile_id: Option<String>,
+    pub token_id: Option<String>,
 }
 
 pub trait EvolutionLogReader {
