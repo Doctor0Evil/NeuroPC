@@ -1,0 +1,18 @@
+name: Deploy Organic CPU Scheduler
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Scheduler
+        run: cargo build --release --bin organic-cpu-scheduler
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: scheduler
+          path: target/release/organic-cpu-scheduler
