@@ -1,0 +1,52 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: organiccpuprofiles.neuro.pc
+spec:
+  group: neuro.pc
+  scope: Namespaced
+  names:
+    kind: OrganicCpuProfile
+    plural: organiccpuprofiles
+    singular: organiccpuprofile
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            required: ["subjectId", "envelopes", "rohCeilingRef"]
+            properties:
+              subjectId:
+                type: string
+              rohCeilingRef:
+                type: string  # path/ID of .rohmodel.aln
+              envelopes:
+                type: object
+                properties:
+                  fatigueMax:
+                    type: number
+                    format: float
+                  dutyCycleMax:
+                    type: number
+                    format: float
+                  cognitiveLoadMax:
+                    type: number
+                    format: float
+            x-kubernetes-validations:
+              # RoH ceiling must never increase (D_new ≤ D_old)
+              - rule: "self.spec.rohCeilingRef == oldSelf.spec.rohCeilingRef"
+                message: "rohCeilingRef is immutable; RoH model may not be loosened."
+              # Envelopes must only tighten (G_new ≥ G_old / D_new ≤ D_old)
+              - rule: "self.spec.envelopes.fatigueMax <= oldSelf.spec.envelopes.fatigueMax"
+                message: "fatigueMax must not increase."
+              - rule: "self.spec.envelopes.dutyCycleMax <= oldSelf.spec.envelopes.dutyCycleMax"
+                message: "dutyCycleMax must not increase."
+              - rule: "self.spec.envelopes.cognitiveLoadMax <= oldSelf.spec.envelopes.cognitiveLoadMax"
+                message: "cognitiveLoadMax must not increase."
+    subresources:
+      status: {}
