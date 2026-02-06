@@ -1,0 +1,9 @@
+capability
+  id               neuromorph_ui_basic
+  description      Render .nvis.aln and .nui-flow.aln without evolution or hardware actuation.
+  modules          neuropc_nvis,neuropc_nui_flow,neuropc_nwave
+  suggestions      allowed
+  actuation        forbidden
+  requires_tokens  SMART
+  roh_max          0.25
+  neurorights_ref  policies/bostrom-neurorights-v1.neurorights.json
