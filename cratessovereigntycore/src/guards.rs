@@ -1,4 +1,3 @@
-// 
 pub struct EvolutionProposalRecord { /* parsed from .evolve.jsonl */ }
 
 pub enum GuardDecision {
