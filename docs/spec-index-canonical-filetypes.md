@@ -176,6 +176,26 @@ This document is the living canonical index of sovereign filetypes for NeuroPC, 
 - **Format**: ALN | JSON | JSONL/NDJSON | Binary | Markdown
 - **Scope**: Sovereign core | Biophysical | Neurorights | AI‑chat | Blockchain
 
+
+
+## 6. Neuromorphic UI/Media
+
+- Extension: `.nwave`
+  - Name: Neuromorphic audio wave
+  - Path: `neuromorph/audio/*.nwave` (binary) + `qpudatashards/particles/* .nwave.aln`
+  - Invariants: `roh_ceiling = 0.30`, `noncommercialneuraldata = true`.
+
+- Extension: `.nvis.aln`
+  - Name: Neuromorphic visual layout
+  - Path: `qpudatashards/particles/*/*.nvis.aln`
+  - Invariants: `roh_ceiling = 0.30`, `hardware_actuation_forbidden = true`.
+
+- Extension: `.nui-flow.aln`
+  - Name: Neuromorphic UI flow spec
+  - Path: `qpudatashards/particles/*/*.nui-flow.aln`
+  - Invariants: `roh_ceiling = 0.30`, `max_roh_delta <= 0.0`, `noncommercialneuraldata = true`.
+
+
 ### Evolution and governance core (table excerpt)
 
 | Extension / File                          | Kind     | Format        | Canonical path (example)                                           | Role / contents                                                                                   | Key invariants                                                                                          |
