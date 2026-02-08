@@ -227,3 +227,25 @@ impl<S: BiophysicalStateReader> SovereigntyCore<S> {
         "2026-02-01T00:00:00Z".to_string()
     }
 }
+
+#[cfg(feature = "ciguard")]
+#[test]
+fn ci_guard_roh_monotone_and_no_actuation() {
+    use sovereignty_kernel_spec::RohModelSpec;
+    use crate::guards::actuation::enforce_neuromorph_non_actuation;
+
+    let roh_spec = RohModelSpec {
+        id: "bostrom-rohmodel-v1".into(),
+        global_ceiling: 0.30,
+    };
+
+    // Synthetic check for monotonic RoH.
+    assert!(roh_spec.enforce_invariant(0.25, 0.20).is_ok());
+    assert!(roh_spec.enforce_invariant(0.25, 0.25).is_ok());
+    assert!(roh_spec.enforce_invariant(0.25, 0.31).is_err());
+    assert!(roh_spec.enforce_invariant(0.25, 0.26).is_err());
+
+    // Actuation must be forbidden in neuromorph scope.
+    assert!(enforce_neuromorph_non_actuation("neuromorph", "syscall::write").is_err());
+    assert!(enforce_neuromorph_non_actuation("bioscale", "log_only").is_ok());
+}
