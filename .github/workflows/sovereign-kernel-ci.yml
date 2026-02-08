@@ -3,13 +3,15 @@ name: Sovereign Kernel CI
 on:
   pull_request:
     paths:
+      - "bostrom-sovereign-kernel-*.ndjson"
+      - ".neurofs-index.aln"
       - "**/*.aln"
       - "**/*.lifaln"
       - "**/*.neuro-cap.aln"
       - "**/*.neurorights.json"
       - "**/*.evolve.jsonl"
-      - "bostrom-sovereign-kernel-*.ndjson"
-      - ".neurofs-index.aln"
+      - "logs/evolution/*.aln"
+      - "crates/**"
 
 jobs:
   sovereign-checks:
@@ -20,11 +22,14 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build sovereign crates
+      - name: Build workspace
         run: cargo build --workspace --locked
+
+      - name: Run neuro-sovereign-spec and RoH/actuation tests
+        run: cargo test -p sovereigntycore --features ciguard
 
       - name: Run neuro-sovereign lints
         run: cargo run -p neuro-sovereign-lint -- --fail-on-warn
 
       - name: Run sovereigntycore guards on proposed changes
-        run: cargo test -p sovereigntycore --features "ci_guard"
+        run: cargo test -p sovereigntycore --features ci_guard
