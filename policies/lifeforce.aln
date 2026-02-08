@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "axes": {
+    "lifeforce": {
+      "min": 0.20,
+      "critical": 0.10,
+      "max_daily_depletion": 0.25,
+      "max_hourly_depletion": 0.10
+    }
+  },
+  "modes": {
+    "Baseline":  { "Lmin": 0.25, "Lcrit": 0.15 },
+    "Training":  { "Lmin": 0.30, "Lcrit": 0.20 },
+    "Rehab":     { "Lmin": 0.35, "Lcrit": 0.25 },
+    "Rest":      { "Lmin": 0.20, "Lcrit": 0.10 }
+  }
+}
