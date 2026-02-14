@@ -1,0 +1,42 @@
+meta
+  rohmodel_id homo-sapiens-rohmodel-v1
+  species_id homo-sapiens
+  version 1.0.0
+
+axes
+  - name thermalload
+    weight 0.15
+    min 0.0
+    max 1.0
+  - name cognitiveload
+    weight 0.20
+    min 0.0
+    max 1.0
+  - name fatigueindex
+    weight 0.20
+    min 0.0
+    max 1.0
+  - name inflammation
+    weight 0.10
+    min 0.0
+    max 1.0
+  - name ecoimpact
+    weight 0.10
+    min 0.0
+    max 1.0
+  - name dreamload
+    weight 0.10
+    min 0.0
+    max 1.0
+  - name lifeforcedrain
+    weight 0.15
+    min 0.0
+    max 1.0
+
+global
+  roh_ceiling 0.30
+
+invariants
+  weights_nonnegative true
+  weights_sum_leq 1.0
+  roh_ceiling_leq 0.30 true
