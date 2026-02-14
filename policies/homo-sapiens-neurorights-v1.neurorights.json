@@ -1,0 +1,58 @@
+{
+  "policy_id": "homo-sapiens-neurorights-v1",
+  "species_id": "homo-sapiens",
+  "corridor_id": "tree-of-life:mammalia:primates:hominidae",
+  "version": "1.0.0",
+  "roh_ceiling": 0.30,
+  "decay_ceiling": 1.0,
+  "computebioload_ceiling": 0.85,
+  "rights": {
+    "mental_privacy": true,
+    "mental_integrity": true,
+    "cognitive_liberty": true,
+    "bodily_integrity": true,
+    "soulnontradeable": true
+  },
+  "decision_use_forbidden": [
+    "employment",
+    "housing",
+    "credit",
+    "insurance"
+  ],
+  "dream_state": {
+    "dream_sensitive": true,
+    "max_retention_hours": 48,
+    "noncommercial": true,
+    "forget_sla_hours": 48
+  },
+  "consent": {
+    "required_modes": ["COPILOT", "AUTOEVOLVE"],
+    "revocable": true,
+    "revocation_effect": "rollback_to_last_safe"
+  },
+  "reversibility": {
+    "max_irreversible_delta_l2": 0.10,
+    "require_rollback_path": true
+  },
+  "justice_rails": {
+    "hpcc": true,
+    "erg": true,
+    "tecr": true
+  },
+  "multi_species": {
+    "allowed_cross_species_links": [
+      "tree-of-life:mammalia",
+      "tree-of-life:aves"
+    ],
+    "forbid_predation_enhancement": true
+  },
+  "proofstatus": {
+    "formal_spec": "complete",
+    "empirical_calibration": "partial",
+    "ethics_review": "complete"
+  },
+  "comments": {
+    "roh_invariant": "RoH must never exceed roh_ceiling or increase across evolution steps.",
+    "decay_invariant": "DECAY must remain ≤ decay_ceiling for all long-lived changes."
+  }
+}
