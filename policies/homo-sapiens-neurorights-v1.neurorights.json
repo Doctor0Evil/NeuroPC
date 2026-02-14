@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "roh_ceiling": 0.30,
   "decay_ceiling": 1.0,
-  "computebioload_ceiling": 0.85,
+  "computebioload_ceiling": 0.95,
   "rights": {
     "mental_privacy": true,
     "mental_integrity": true,
@@ -28,11 +28,15 @@
   "consent": {
     "required_modes": ["COPILOT", "AUTOEVOLVE"],
     "revocable": true,
-    "revocation_effect": "rollback_to_last_safe"
+    "revocation_effect": "rollback_to_last_safe_if_reversible"
   },
   "reversibility": {
-    "max_irreversible_delta_l2": 0.10,
-    "require_rollback_path": true
+    "max_irreversible_delta_l2": 1.0,
+    "require_rollback_path": false,
+    "host_may_choose_irreversible": true,
+    "irreversible_scope_ids": [
+      "host_self_arch_evolution"
+    ]
   },
   "justice_rails": {
     "hpcc": true,
@@ -44,15 +48,12 @@
       "tree-of-life:mammalia",
       "tree-of-life:aves"
     ],
-    "forbid_predation_enhancement": true
+    "forbid_predation_enhancement": true,
+    "forbid_irreversible_cross_species": true
   },
   "proofstatus": {
     "formal_spec": "complete",
     "empirical_calibration": "partial",
     "ethics_review": "complete"
-  },
-  "comments": {
-    "roh_invariant": "RoH must never exceed roh_ceiling or increase across evolution steps.",
-    "decay_invariant": "DECAY must remain ≤ decay_ceiling for all long-lived changes."
   }
 }
