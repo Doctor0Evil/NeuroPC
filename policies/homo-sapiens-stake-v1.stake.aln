@@ -7,7 +7,7 @@ roles
   - name Host
     kind primary
     did bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
-    veto_powers [lifeforcealteration, archchange, crossspecieslink]
+    veto_powers [lifeforcealteration, archchange, host_self_arch_evolution, crossspecieslink]
   - name OrganicCPU
     kind runtime
     did zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8
@@ -18,18 +18,26 @@ roles
     veto_powers [archchange]
 
 scopes
+  - scope_id host_self_arch_evolution
+    required_roles [Host]
+    token_kinds [EVOLVE]
+    multisig_required false
+
   - scope_id lifeforcealteration
     required_roles [Host, OrganicCPU]
     token_kinds [EVOLVE]
     multisig_required true
+
   - scope_id archchange
     required_roles [Host, OrganicCPU, ResearchAgent]
     token_kinds [EVOLVE]
     multisig_required true
+
   - scope_id daytodaytuning
     required_roles [Host]
     token_kinds [SMART, EVOLVE]
     multisig_required false
+
   - scope_id crossspecieslink
     required_roles [Host, OrganicCPU]
     token_kinds [EVOLVE]
@@ -37,5 +45,5 @@ scopes
 
 invariants
   exactly_one_host_per_species true
-  lifeforce_and_arch_require_evolve true
-  crossspecies_links_require_multisig true
+  host_self_arch_evolution_allowed true
+  crossspecies_irreversible_forbidden true
