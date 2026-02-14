@@ -1,0 +1,58 @@
+meta
+  vkernel_id homo-sapiens-vkernel-v1
+  species_id homo-sapiens
+  version 1.0.0
+  space_dim 8  # intensity, duty, cumulative, power, neuromod, cogload, legal, lifeforce
+
+axes
+  - name intensity
+    min 0.0
+    max 1.0
+  - name dutycycle
+    min 0.0
+    max 1.0
+  - name cumulativeload
+    min 0.0
+    max 1.0
+  - name implantpower
+    min 0.0
+    max 1.0
+  - name neuromodamplitude
+    min 0.0
+    max 1.0
+  - name cognitiveload
+    min 0.0
+    max 1.0
+  - name legalcomplexity
+    min 0.0
+    max 1.0
+  - name lifeforce
+    min 0.0
+    max 1.0
+
+kernels
+  - id homo-sapiens-baseline-v1
+    mode Baseline
+    description Daily baseline envelope.
+    A
+      - [ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+      - [ 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+      - [ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+      - [ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0 ]
+      - [ 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0 ]
+      - [ 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0 ]
+      - [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 ]
+      - [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 ]
+    b
+      - 0.7
+      - 0.5
+      - 0.6
+      - 0.4
+      - 0.5
+      - 0.7
+      - 0.6
+      - -0.4
+
+invariants
+  kernel_membership_must_hold true
+  no_kernel_loosen_via_evolution true
