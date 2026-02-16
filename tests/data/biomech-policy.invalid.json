@@ -1,0 +1,27 @@
+{
+  "subjectid": "test-subject-invalid",
+  "version": "1.0.0",
+  "modules": [
+    {
+      "id": "forbidden-motor-module",
+      "scope": "motormacros",
+      "riskclass": "R2_bounded_auto",
+      "integrationrole": "boundedauto",
+      "maxeffectsize": 1.5,
+      "maxupdatesperday": 100,
+      "requireevolvetoken": false
+    }
+  ],
+  "riskclasses": {
+    "R0_observer": {
+      "description": "Analytics only; no outputs that change mappings or actuation."
+    },
+    "R1_advisor": {
+      "description": "Suggest macros or changes; never apply them automatically."
+    },
+    "R2_bounded_auto": {
+      "description": "May auto-adjust parameters within EVOLVE and pain envelopes.",
+      "maxautochangesperday": 3
+    }
+  }
+}
