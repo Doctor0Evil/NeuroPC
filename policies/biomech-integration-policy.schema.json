@@ -6,7 +6,6 @@
   "properties": {
     "subjectid": { "type": "string" },
     "version": { "type": "string" },
-
     "modules": {
       "type": "array",
       "items": {
@@ -14,7 +13,6 @@
         "required": ["id", "scope", "riskclass", "integrationrole"],
         "properties": {
           "id": { "type": "string" },
-
           "scope": {
             "type": "string",
             "enum": [
@@ -26,28 +24,23 @@
               "other"
             ]
           },
-
           "riskclass": {
             "type": "string",
             "enum": ["R0_observer", "R1_advisor", "R2_bounded_auto"]
           },
-
           "integrationrole": {
             "type": "string",
             "enum": ["observeronly", "advisor", "boundedauto", "forbidden"]
           },
-
           "maxeffectsize": {
             "type": "number",
             "minimum": 0.0,
             "maximum": 1.0
           },
-
           "maxupdatesperday": {
             "type": "integer",
             "minimum": 0
           },
-
           "requireevolvetoken": {
             "type": "boolean",
             "default": true
@@ -56,7 +49,6 @@
         "additionalProperties": false
       }
     },
-
     "riskclasses": {
       "type": "object",
       "required": ["R0_observer", "R1_advisor", "R2_bounded_auto"],
