@@ -1,0 +1,35 @@
+{
+  "$id": "https://neuropc.org/schemas/neuropc_terraform_proposal.schema.json",
+  "type": "object",
+  "required": [
+    "proposal_id",
+    "subject_id",
+    "tfc_org",
+    "workspace_name",
+    "plan_summary",
+    "roh_before",
+    "roh_after_estimate",
+    "domaintags"
+  ],
+  "properties": {
+    "proposal_id": { "type": "string" },
+    "subject_id":  { "type": "string" },
+    "tfc_org":     { "type": "string" },
+    "workspace_name": { "type": "string" },
+    "plan_summary": {
+      "type": "object",
+      "description": "High-level diff summary extracted from TF plan (no secrets)."
+    },
+    "roh_before": { "type": "number" },
+    "roh_after_estimate": { "type": "number" },
+    "domaintags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["Allowed", "Rejected", "Deferred"]
+    },
+    "hexstamp": { "type": "string" }
+  }
+}
