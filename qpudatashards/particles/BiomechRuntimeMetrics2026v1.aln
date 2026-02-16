@@ -1,0 +1,49 @@
+shard BiomechRuntimeMetrics2026v1 {
+  description: "Biomech runtime metrics for OrganicCPU deviceless sessions, 2026 v1";
+  schema: "session_id, metric, value, unit, ecoimpactscore, timestamp_utc";
+
+  row {
+    session_id: "deviceless-session-0001";
+    metric: "fatigueindex";
+    value: 0.32;
+    unit: "unitless";
+    ecoimpactscore: 0.001;
+    timestamp_utc: "2026-02-16T16:16:00Z";
+  }
+
+  row {
+    session_id: "deviceless-session-0001";
+    metric: "dutycycle";
+    value: 0.18;
+    unit: "unitless";
+    ecoimpactscore: 0.001;
+    timestamp_utc: "2026-02-16T16:16:00Z";
+  }
+
+  row {
+    session_id: "deviceless-session-0001";
+    metric: "cognitiveloadindex";
+    value: 0.41;
+    unit: "unitless";
+    ecoimpactscore: 0.001;
+    timestamp_utc: "2026-02-16T16:16:00Z";
+  }
+
+  row {
+    session_id: "deviceless-session-0001";
+    metric: "biomech_gain";
+    value: 0.10;
+    unit: "unitless";
+    ecoimpactscore: 0.001;
+    timestamp_utc: "2026-02-16T16:16:00Z";
+  }
+
+  row {
+    session_id: "deviceless-session-0001";
+    metric: "biomech_decisions_per_session";
+    value: 3.0;
+    unit: "count";
+    ecoimpactscore: 0.001;
+    timestamp_utc: "2026-02-16T16:16:00Z";
+  }
+}
