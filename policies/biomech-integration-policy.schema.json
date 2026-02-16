@@ -1,0 +1,91 @@
+{
+  "$id": "https://neuro.pc/schemas/biomech-integration-policy.schema.json",
+  "type": "object",
+  "title": "Biomechanical Integration Policy",
+  "required": ["subjectid", "version", "modules", "riskclasses"],
+  "properties": {
+    "subjectid": { "type": "string" },
+    "version": { "type": "string" },
+
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "scope", "riskclass", "integrationrole"],
+        "properties": {
+          "id": { "type": "string" },
+
+          "scope": {
+            "type": "string",
+            "enum": [
+              "motormacros",
+              "gaitassist",
+              "postureassist",
+              "gripassist",
+              "respiratoryassist",
+              "other"
+            ]
+          },
+
+          "riskclass": {
+            "type": "string",
+            "enum": ["R0_observer", "R1_advisor", "R2_bounded_auto"]
+          },
+
+          "integrationrole": {
+            "type": "string",
+            "enum": ["observeronly", "advisor", "boundedauto", "forbidden"]
+          },
+
+          "maxeffectsize": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+
+          "maxupdatesperday": {
+            "type": "integer",
+            "minimum": 0
+          },
+
+          "requireevolvetoken": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "riskclasses": {
+      "type": "object",
+      "required": ["R0_observer", "R1_advisor", "R2_bounded_auto"],
+      "properties": {
+        "R0_observer": {
+          "type": "object",
+          "required": ["description"],
+          "properties": {
+            "description": { "type": "string" }
+          }
+        },
+        "R1_advisor": {
+          "type": "object",
+          "required": ["description"],
+          "properties": {
+            "description": { "type": "string" }
+          }
+        },
+        "R2_bounded_auto": {
+          "type": "object",
+          "required": ["description", "maxautochangesperday"],
+          "properties": {
+            "description": { "type": "string" },
+            "maxautochangesperday": { "type": "integer", "minimum": 0 }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
