@@ -1,0 +1,36 @@
+{
+  "subjectid": "test-subject-valid",
+  "version": "1.0.0",
+  "modules": [
+    {
+      "id": "motormacros-basic",
+      "scope": "motormacros",
+      "riskclass": "R2_bounded_auto",
+      "integrationrole": "boundedauto",
+      "maxeffectsize": 0.10,
+      "maxupdatesperday": 5,
+      "requireevolvetoken": true
+    },
+    {
+      "id": "posture-analytics",
+      "scope": "postureassist",
+      "riskclass": "R0_observer",
+      "integrationrole": "observeronly",
+      "maxeffectsize": 0.0,
+      "maxupdatesperday": 0,
+      "requireevolvetoken": false
+    }
+  ],
+  "riskclasses": {
+    "R0_observer": {
+      "description": "Analytics only; no outputs that change mappings or actuation."
+    },
+    "R1_advisor": {
+      "description": "Suggest macros or changes; never apply them automatically."
+    },
+    "R2_bounded_auto": {
+      "description": "May auto-adjust parameters within EVOLVE and pain envelopes.",
+      "maxautochangesperday": 3
+    }
+  }
+}
