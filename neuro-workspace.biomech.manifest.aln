@@ -1,0 +1,29 @@
+workspace BiomechIntegration {
+  description: "AI-facing manifest for biomech integration in NeuroPC deviceless OrganicCPU mode (2026).";
+
+  files {
+    policy_schema: "policies/biomech-integration-policy.schema.json";
+    policy_instance: "policies/biomech-integration-policy.bostrom.v1.json";
+    metrics_shard: "qpudatashards/particles/BiomechRuntimeMetrics2026v1.aln";
+    controller_module: "src/modules/biomech_controller.rs";
+    guard_module: "src/guards/biomech_guard.rs";
+  }
+
+  rules {
+    ai_may_edit: [
+      "policy_instance",
+      "controller_module",
+      "guard_module"
+    ];
+
+    ai_may_read: [
+      "policy_schema",
+      "metrics_shard"
+    ];
+
+    constraints {
+      rule: "AI tools may only create or modify UpdateProposals and configuration; they may never directly edit live state vectors or actuation mappings.";
+      rule: "All biomech-related changes must be funneled through SovereigntyCore and logged into .evolve.jsonl and .donutloop.aln.";
+    }
+  }
+}
