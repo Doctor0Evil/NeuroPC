@@ -1,0 +1,144 @@
+SECTION,DONUTLOOP-EVENT
+version,1
+event_id,0xNP10-P300-HFHRV-KEYSTROKE-V1
+subject_did,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+bostrom_alt_did,bostrom1ldgmtf20d6604a24ztr0jxht7xt7az4jhkmsrc
+evitapp_ref,EVITAPP-NON-ACTUATING-UX
+rohmodel_ref,.rohmodel.aln
+organiccpu_orchestrator_ref,organiccpuorchestrator/src/lib.rs
+role,DIAGNOSTIC_ONLY
+roh_ceiling_capcontrolledhuman,0.3
+neuroprint_name,nicotine_neuroprint.v1
+description,P300-HFHRV-keystroke mapping v1 (diagnostic-only, RoH-bounded)
+habeas_cogitationem_anchor,true
+nicotine_use_endorsement,false
+actuation_paths_added,0
+created_at_utc,2026-02-15T20:40:00Z
+
+[NEUROPRINT-METRICS]
+# All values are normalized 0–1 indices, read-only, advisory only.
+metric_id,P300LatencyIndex
+source,EEG/ERP
+domain,central
+range_min,0.0
+range_max,1.0
+roh_weight,0.00
+role,DIAGNOSTIC_ONLY
+notes,Lower values = faster P300 latency after acute nicotine or relief from abstinence; abstinence drives this upward.[file:12]
+
+metric_id,P300AmplitudeIndex
+source,EEG/ERP
+domain,central
+range_min,0.0
+range_max,1.0
+roh_weight,0.00
+role,DIAGNOSTIC_ONLY
+notes,Preserved or increased amplitude under nicotine; reduced in early abstinence.[file:12]
+
+metric_id,HFHRVIndex
+source,ECG/HRV
+domain,autonomic
+range_min,0.0
+range_max,1.0
+roh_weight,0.02
+role,DIAGNOSTIC_ONLY
+notes,Relative HF-HRV level; acute nicotine produces ~22–34% suppression from baseline, mapped into this index.[file:12]
+
+metric_id,PupilConstrictionVelocityIndex
+source,PUPILLOMETRY
+domain,autonomic
+range_min,0.0
+range_max,1.0
+roh_weight,0.01
+role,DIAGNOSTIC_ONLY
+notes,Increase of ~12–19% constriction velocity within 4–7 minutes after nicotine, mapped to higher index values.[file:12]
+
+metric_id,EDAReactivityIndex
+source,EDA
+domain,autonomic
+range_min,0.0
+range_max,1.0
+roh_weight,0.01
+role,DIAGNOSTIC_ONLY
+notes,Attenuated skin conductance responses under nicotine in the same window; index tracks relative reactivity.[file:12]
+
+metric_id,KeystrokeEntropyIndex
+source,KEYSTROKE
+domain,behavioral
+range_min,0.0
+range_max,1.0
+roh_weight,0.00
+role,DIAGNOSTIC_ONLY
+notes,Variance/entropy in typing dynamics; compresses under nicotine or NoFumo+-style interventions, rises in early abstinence.[file:12]
+
+metric_id,RTVarianceIndex
+source,BEHAVIORAL-RT
+domain,behavioral
+range_min,0.0
+range_max,1.0
+roh_weight,0.00
+role,DIAGNOSTIC_ONLY
+notes,Reaction-time variance; decreases over first 30–60 minutes post-dose, increases under acute abstinence.[file:12]
+
+metric_id,MicrosaccadeStabilityIndex
+source,EYE-TRACKING
+domain,behavioral
+range_min,0.0
+range_max,1.0
+roh_weight,0.00
+role,DIAGNOSTIC_ONLY
+notes,Microsaccade stability; higher under nicotine or effective digital support, lower during abstinence, correlating with fatigue.[file:12]
+
+[NEUROPRINT-AGGREGATES]
+aggregate_id,NicotineCentralSpeedIndex
+formula,1.0 - P300LatencyIndex
+roh_weight,0.00
+role,DIAGNOSTIC_ONLY
+
+aggregate_id,NicotineAutonomicShiftIndex
+formula,0.5*(1.0-HFHRVIndex) + 0.3*PupilConstrictionVelocityIndex + 0.2*(1.0-EDAReactivityIndex)
+roh_weight,0.04
+role,DIAGNOSTIC_ONLY
+
+aggregate_id,NicotineBehavioralStabilityIndex
+formula,0.4*(1.0-KeystrokeEntropyIndex) + 0.4*(1.0-RTVarianceIndex) + 0.2*MicrosaccadeStabilityIndex
+roh_weight,0.04
+role,DIAGNOSTIC_ONLY
+
+aggregate_id,NicotineNeuroprintComposite
+formula,(NicotineCentralSpeedIndex + NicotineAutonomicShiftIndex + NicotineBehavioralStabilityIndex) / 3.0
+roh_weight,0.08
+role,DIAGNOSTIC_ONLY
+roh_invariant,RUN_TIME_ROH_CONTRIB <= 0.08
+
+[TEMPORAL-CONSTRAINTS]
+pk_window_start_min,5
+pk_window_peak_min,10
+pk_window_end_min,120
+pk_window_source,Plasma nicotine Tmax ~10–20 min; ERP/HRV/behavior time-locked to <5–120 min corridor.[file:12]
+
+[ROH-INVARIANTS]
+roh_ceiling_capcontrolledhuman,0.3
+neuroprint_role,READ_ONLY
+neuroprint_actuation_allowed,false
+neuroprint_may_gate_capabilities,false
+neuroprint_may_adjust_envelopes,false
+neuroprint_may_adjust_consent,false
+roh_after_neuroprint_eval,<= roh_before_neuroprint_eval
+neuroprint_to_nanorisk_wiring,DISALLOWED
+
+[CONSENT-BINDING]
+evolve_required_for_neuroprint,false
+consent_surface,NICOTINE-COPILOT-DASHBOARD
+legal_doctrine_anchor,habeas_cogitationem
+notes,Neuroprint used only to recommend rest or digital pacing, never nicotine or pharmacologic change.
+
+[ANCHORS]
+evitapp_non_actuation_reference,EVITAPP-RCT-2024-LOW-DEPENDENCE-FAGERSTROM-0.6-TO-0.1-SUS>80
+oecd_neurorights_gap,NO_PUBLIC_RoH_0.3_METRIC_OR_EVOLVE_GATES_FOUND
+bostrom_primary_address,bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7
+bostrom_safe_alt_address,zeta12x0up66pzyeretzyku8p4ccuxrjqtqpdc4y4x8
+bostrom_erc20_address,0x519fC0eB4111323Cac44b70e1aE31c30e405802D
+googolswarm_anchor_mode,OPTIONAL
+hex_stamp,0xNP10
+END-SECTION
