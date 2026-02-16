@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+
 use crate::sovereigntycore::{
     AuditEntry,
     BiophysicalStateReader,
@@ -14,9 +15,9 @@ use crate::sovereigntycore::{
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BiomechProfile {
     pub id: String,
-    pub gain: f32,          // 0.0–1.0, abstract assist “strength”
-    pub smoothing: f32,     // 0.0–1.0, how quickly it reacts
-    pub max_duration_ms: u32
+    pub gain: f32,
+    pub smoothing: f32,
+    pub max_duration_ms: u32,
 }
 
 pub struct BiomechController<'a, S: BiophysicalStateReader> {
@@ -26,12 +27,27 @@ pub struct BiomechController<'a, S: BiophysicalStateReader> {
 }
 
 impl<'a, S: BiophysicalStateReader> BiomechController<'a, S> {
+    pub fn new(
+        modulename: impl Into<String>,
+        profile: BiomechProfile,
+        sovereignty: &'a mut SovereigntyCore<S>,
+    ) -> Self {
+        Self {
+            modulename: modulename.into(),
+            profile,
+            sovereignty,
+        }
+    }
+
     pub fn propose_tune(
         &mut self,
         new_gain: f32,
         new_smoothing: f32,
         evolvetoken_id: Option<&str>,
     ) -> AuditEntry {
+        let new_gain = new_gain.clamp(0.0, 1.0);
+        let new_smoothing = new_smoothing.clamp(0.0, 1.0);
+
         let delta_gain = (new_gain - self.profile.gain).abs();
         let delta_smoothing = (new_smoothing - self.profile.smoothing).abs();
         let l2delta = (delta_gain.powi(2) + delta_smoothing.powi(2)).sqrt();
@@ -49,9 +65,7 @@ impl<'a, S: BiophysicalStateReader> BiomechController<'a, S> {
             requiresevolve: true,
         };
 
-        let audit = self
-            .sovereignty
-            .evaluateupdate(proposal, evolvetoken_id);
+        let audit = self.sovereignty.evaluateupdate(proposal, evolvetoken_id);
 
         if matches!(audit.decision, DecisionOutcome::Allowed) {
             self.profile.gain = new_gain;
@@ -61,7 +75,6 @@ impl<'a, S: BiophysicalStateReader> BiomechController<'a, S> {
         audit
     }
 
-    /// Read current biophysical state (fatigue, pain, etc.) through the abstract interface.
     pub fn current_state(&self) -> StateVector {
         self.sovereignty.statereader.readstate()
     }
