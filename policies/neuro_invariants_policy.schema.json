@@ -1,0 +1,21 @@
+{
+  "$schema": "https://neuro.pc/schemas/neuro_invariants_policy.schema.json",
+  "subject_id": "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7",
+  "version": "2026.02.24",
+  "eegmath_invariants": {
+    "energy_residual_threshold": 0.05,
+    "plv_min": 0.92,
+    "spectral_entropy_max": 3.8,
+    "lyapunov_spectrum": { "max_le": 0.15, "min_le": -0.25 }
+  },
+  "bioregnet": {
+    "etot_balance_tolerance": 0.03,
+    "rt_feedback_gain": 0.87,
+    "autophagic_prune_rate": 0.12
+  },
+  "compliance_bits": {
+    "write_once_mask": "0xFFFFFFFFFFFFFFFF",
+    "initial_bits": "0x0000000000000000"
+  },
+  "require_evolve_for_invariant_change": true
+}
