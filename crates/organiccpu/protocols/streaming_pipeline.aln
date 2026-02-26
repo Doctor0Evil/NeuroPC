@@ -1,0 +1,71 @@
+// Data flow from raw spikes to intent output
+
+streaming_pipeline_specification {
+  name: "neuralink_n1_event_driven_pipeline";
+  
+  /// Layer 1: Raw Spike Detection (Analog Frontend)
+  layer_1_analog_frontend {
+    input: "raw_analog_signals_1024ch@30khz";
+    process: "threshold_crossing_detector";
+    output: "1024_binary_spike_events";
+    duty_cycle_max: 0.1;      // <0.1% on analog circuits
+    roh_contribution: 0.01;   // Minimal: just thresholding, no computation
+    processing_location: "implant_analog_asic";
+  };
+  
+  /// Layer 2: Spike Sorting (Microsecond Latency On-Implant)
+  layer_2_spike_sorting {
+    input: "1024_binary_spike_events_@variable_rate";
+    process: "template_matching_snn_decoder";
+    output: "32_intent_components@100hz";
+    duty_cycle_max: 0.3;     // <0.3% avg SoC
+    roh_contribution: 0.08;  // Medium: SNN inference involved
+    processing_location: "implant_soc_int8_onnx";
+    model_file: "snn_decoder.onnx";
+    model_size_kb: 180;
+    latency_ms: 2;  // Must complete <2ms for real-time
+  };
+  
+  /// Layer 3: Neurorights Suppression (Cognitive Channel Veto)
+  layer_3_neurorights_filter {
+    input: "32_intent_components";
+    process: "zero_out_non_motor_components";
+    rule: "suppress_components with roh_safe=false";  // From Step 4
+    output: "8_motor_intent_components";
+    duty_cycle_max: 0.05;     // Minimal: just indexing
+    roh_contribution: 0.02;   // Very low: enforcement, not computation
+    processing_location: "implant_soc";
+    enforcement: "hardware_mask";  // Irreversible suppression
+  };
+  
+  /// Layer 4: Wireless TX (Event-Pulsed)
+  layer_4_wireless_tx {
+    input: "8_motor_intent_components@100hz";
+    process: "encode_to_bluetooth_packet";
+    output: "tx_burst@bluetooth_2.4ghz";
+    duty_cycle_max: 0.5;      // <0.5% pulsed (per Step 2 eco-safe)
+    roh_contribution: 0.06;   // Moderate: RF transmission
+    processing_location: "implant_radio_asic";
+    modulation: "ble_coded_phy";  // Robust against interference
+    encryption: "aes_256_local_only";  // Encrypted locally, not in cloud
+    packet_rate: "10hz_bursts_200ms_width";  // Burst, not continuous
+  };
+};
+
+/// End-to-End RoH Budget
+roh_budget {
+  layer_1_analog: 0.01;
+  layer_2_snn: 0.08;
+  layer_3_neurorights: 0.02;
+  layer_4_wireless: 0.06;
+  total_on_implant: 0.17;  // <0.20 (Neuralink's own RoH ceiling)
+};
+
+/// Latency Requirements
+latency_budget {
+  layer_1: 0.1_ms;   // Analog response
+  layer_2: 2.0_ms;   // SNN decode
+  layer_3: 0.5_ms;   // Suppression
+  layer_4: 5.0_ms;   // TX encode
+  total_e2e: 7.6_ms; // Acceptable for <10ms control loop
+};
