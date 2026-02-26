@@ -1,0 +1,83 @@
+// Formal partition of 1024 channels by privacy class
+
+neurorights_partition {
+  class_0_motor_intent {
+    channel_range: [0, 299];   // Threads 0-2 M1 hand
+    count: 300;
+    privacy_level: "public_derivable";  // Motor intent can be extracted, user consents
+    retention_policy: "24_hours_local";
+    allowed_export: "intent_vector_only";  // E.g., [0.8, -0.3, 0.1] for 3D direction, not raw spikes
+    allowed_commercial_use: "forbidden";
+  };
+  
+  class_1_somatosensory {
+    channel_range: [300, 499];  // Threads 3-4 S1 hand
+    count: 200;
+    privacy_level: "semi_private";        // Sensory feedback, less intrusive than thought
+    retention_policy: "24_hours_local";
+    allowed_export: "processed_feedback_only";  // E.g., pressure/temperature, not raw
+    allowed_commercial_use: "forbidden";
+  };
+  
+  class_2_cognitive_planning {
+    channel_range: [500, 799];  // Threads 5-7 PFC
+    count: 300;
+    privacy_level: "cognitive_liberty_protected";  // Raw thought, highest protection
+    retention_policy: "session_only";  // Discarded after session
+    allowed_export: "forbidden";  // NEVER leave implant in raw form
+    allowed_commercial_use: "absolutely_forbidden";
+    rule_employment_screening: "forbidden";
+    rule_dream_processing: "forbidden";
+    neurorights_flag: "mental_privacy_absolute";
+  };
+  
+  class_3_speech_language {
+    channel_range: [800, 1023];  // Threads 8-9 STS
+    count: 224;
+    privacy_level: "inner_speech_protected";
+    retention_policy: "48_hours_local";
+    allowed_export: "decoded_text_only";  // E.g., "reach left", not raw spikes
+    allowed_commercial_use: "forbidden";
+    neurorights_flag: "cognitive_liberty_speech";
+  };
+};
+
+/// Hard constraints for enforcement
+hard_constraints {
+  rule_cognitive_never_external {
+    target_class: "cognitive_planning";
+    action: "transmit_raw_spikes_or_export";
+    enforcement: "absolute_veto";
+    consequence_if_violated: "shutdown_neuralink_to_observe_mode";
+  };
+  
+  rule_motor_requires_consent {
+    target_class: "motor_intent";
+    action: "export_intent_vector";
+    enforcement: "requires_per_session_consent";
+    consequence_if_violated: "block_export_until_user_acknowledges";
+  };
+  
+  rule_speech_requires_decoding_confirmation {
+    target_class: "speech_language";
+    action: "export_as_text";
+    enforcement: "requires_user_ratification_per_utterance";
+    consequence_if_violated: "suppress_speech_output_until_ratified";
+  };
+};
+
+/// RoH contribution per class (from Step 2 baseline)
+roh_weighting {
+  class_motor_intent {
+    roh_weight: 0.04;  // Low: motor intent is somewhat detached from private thought
+  };
+  class_somatosensory {
+    roh_weight: 0.06;  // Medium-low: sensory can indirectly reveal thought
+  };
+  class_cognitive_planning {
+    roh_weight: 0.30;  // Highest: raw thought, severe privacy risk
+  };
+  class_speech_language {
+    roh_weight: 0.25;  // High: inner speech reveals thinking process
+  };
+};
