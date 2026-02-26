@@ -1,0 +1,66 @@
+// Timestamp-based scheduling to share SoC compute among intent streams
+
+duty_cycle_scheduler {
+  total_soc_budget_mw: 24.7;  // Neuralink baseline
+  total_duty_cycle_percent: 1.0;
+  
+  /// Time-division multiplexing (TDM)
+  tdm_schedule_ms {
+    slot_0_motor_intent {
+      duration_ms: 3;           // 3ms every 10ms = 30% of motor slot
+      duty_cycle_allocation: 0.4;
+      priority: 1;  // Highest: movement control
+      roh_budget: 0.08;
+    };
+    
+    slot_1_sensory_feedback {
+      duration_ms: 2;
+      duty_cycle_allocation: 0.3;
+      priority: 2;
+      roh_budget: 0.05;
+    };
+    
+    slot_2_speech_intent {
+      duration_ms: 2;
+      duty_cycle_allocation: 0.2;
+      priority: 3;  // Lower: speech is less time-critical
+      roh_budget: 0.05;
+    };
+    
+    slot_3_housekeeping {
+      duration_ms: 3;           // Battery check, temp monitoring, etc.
+      duty_cycle_allocation: 0.1;
+      priority: 0;  // Lowest
+      roh_budget: 0.01;
+    };
+  };
+  
+  /// Adaptive slot re-allocation based on user state
+  adaptive_rules {
+    if_user_active_movement {
+      boost_motor_intent_to_5ms;
+      reduce_speech_to_1ms;
+      reduce_sensory_to_1ms;
+      rationale: "movement is primary during active use";
+    };
+    
+    if_user_speaking {
+      boost_speech_to_4ms;
+      reduce_motor_to_2ms;
+      rationale: "speech has high instantaneous demand";
+    };
+    
+    if_user_resting_recovering {
+      reduce_all_slots_by_30_percent;
+      increase_housekeeping_to_5ms;
+      rationale: "preserve lifeforce during rest";
+    };
+  };
+  
+  /// RoH Monotonicity Check
+  roh_check {
+    total_roh_before_reallocation: 0.17;
+    total_roh_after_reallocation: "must be ≤ 0.17";
+    consequence_if_violated: "reject_reallocation_stay_current";
+  };
+};
