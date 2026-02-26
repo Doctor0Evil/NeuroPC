@@ -1,0 +1,6 @@
+[dependencies]
+parking_lot = "0.12"       # Lock-free sync
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"            # Timestamping
+tinyml-onnx = "0.3"       # On-device neural nets
+statrs = "0.16"           # Statistics (EMA, RoH calculation)
