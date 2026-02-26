@@ -1,0 +1,31 @@
+// Intra-implant connectivity graph
+
+channel_routing_graph {
+  nodes {
+    node_0 { name: "thread_0_electrodes"; channels: 100; }
+    node_1 { name: "thread_1_electrodes"; channels: 100; }
+    // ... 8 more threads ...
+    
+    node_analog_frontend { name: "ad_converters_1024ch"; channels: 1024; }
+    node_spike_sorter { name: "snn_decoder_soc"; channels: 32; }
+    node_neurorights_filter { name: "cognitive_suppressor"; channels: 8; }
+    node_bluetooth_tx { name: "ble_radio"; channels: 8; }
+  };
+  
+  edges {
+    edge_0 { from: "thread_0_electrodes", to: "analog_frontend", delay_ns: 10, channels: 100; };
+    // ... 1022 more edges for all threads ...
+    
+    edge_1024 { from: "analog_frontend", to: "spike_sorter", delay_ns: 50, bandwidth_mbps: 100; };
+    edge_1025 { from: "spike_sorter", to: "neurorights_filter", delay_ns: 100, bandwidth_mbps: 8; };
+    edge_1026 { from: "neurorights_filter", to: "bluetooth_tx", delay_ns: 200, bandwidth_mbps: 4; };
+  };
+  
+  /// RoH per edge
+  roh_per_edge {
+    edge_0 { roh_contribution: 0.0001; };  // Wire, no computation
+    edge_1024 { roh_contribution: 0.001; };  // AD conversion
+    edge_1025 { roh_contribution: 0.008; };  // SNN spike sorting (main compute)
+    edge_1026 { roh_contribution: 0.006; };  // Suppression + filtering
+  };
+};
