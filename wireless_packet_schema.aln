@@ -1,0 +1,39 @@
+// Bluetooth packet format for motor intent export
+
+wireless_packet_frame {
+  version: 2;
+  packet_size_bytes: 32;
+  encryption: "aes_256_cbc";  // Encrypted end-to-end
+  
+  /// Packet Structure
+  packet_layout {
+    byte_0_1_packet_id: "u16";  // Sequence number for dropout detection
+    byte_2_3_timestamp_ms: "u16_modulo";  // Time (wraps every 65.5 seconds)
+    byte_4_11_intent_xyz: "[f32; 3]";  // 3D motor direction vector
+    byte_12_15_confidence: "f32";  // SNN output confidence score
+    byte_16_19_roh_marker: "u32";  // RoH monotonicity checksum
+    byte_20_31_reserved: "u8[12]";  // Reserved for future
+  };
+  
+  /// Encryption & Auth
+  security {
+    key_derivation: "HKDF_SHA256";
+    iv_per_packet: "true";
+    hmac_algorithm: "SHA256_truncated_to_64bits";
+    key_rotates_every_hours: 24;
+  };
+  
+  /// Privacy Guarantees in Frame
+  privacy {
+    intent_xyz_obfuscated: "false";  // Motor is motor_intent class, can be clear
+    confidence_smoothed: "true";     // Confidence is averaged over 5 packets to hide neuron activity
+    roh_marker_present: "true";      // Allows receiver to verify no packet tampering
+    
+    never_in_frame {
+      raw_spike_times: "true";       // NEVER
+      spike_waveforms: "true";       // NEVER
+      pfc_activity_markers: "true";  // NEVER
+      dream_state_markers: "true";   // NEVER
+    };
+  };
+};
