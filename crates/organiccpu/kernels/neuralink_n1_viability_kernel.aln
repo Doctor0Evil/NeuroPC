@@ -1,0 +1,180 @@
+viability_kernel_specification {
+  agent_name: "Neuralink_N1_SoC_Instance";
+  kernel_version: "v2.2026";
+  
+  /// The 8D state space (same as NeuroPC, file 11)
+  axes {
+    axis_0_intensity {
+      label: "spike_detection_threshold_intensity";
+      range_min: 50.0;      // µV, can't go below
+      range_max: 200.0;     // µV, can't exceed (would miss events or trigger noise)
+      safe_midpoint: 120.0;
+      units: "microvolt";
+    };
+    
+    axis_1_duty_cycle {
+      label: "average_processing_duty_percent";
+      range_min: 0.1;       // Must be using some resources
+      range_max: 1.0;       // Absolute ceiling: <1% avg tx/compute
+      safe_midpoint: 0.3;
+      units: "percent";
+      roh_coupling: 0.08;  // Each 0.1% increase → +0.008 RoH
+    };
+    
+    axis_2_cumulative_load {
+      label: "total_spike_detections_per_hour";
+      range_min: 10.0;
+      range_max: 10000.0;   // Too many spikes/hour = noise or seizure-like
+      safe_midpoint: 1000.0;
+      units: "events/hour";
+      roh_coupling: 0.04;  // If load escalates, RoH rises
+    };
+    
+    axis_3_implant_power {
+      label: "on_implant_soc_power_consumption";
+      range_min: 5.0;       // mW, minimum viable
+      range_max: 50.0;      // mW, thermal safety
+      safe_midpoint: 24.7;  // Neuralink baseline
+      units: "milliwatt";
+      roh_coupling: 0.06;   // Overheating risk
+    };
+    
+    axis_4_neuromod_amplitude {
+      label: "feedback_stimulation_amplitude";
+      range_min: 0.0;       // No stimulation
+      range_max: 100.0;     // µA, user pain envelope upper bound
+      safe_midpoint: 30.0;
+      units: "microampere";
+      roh_coupling: 0.15;   // Highest coupling: stimulation is invasive
+    };
+    
+    axis_5_cognitive_load {
+      label: "user_reported_cognitive_strain";
+      range_min: 0.0;       // Relaxed
+      range_max: 1.0;       // Maxed out (normalized index)
+      safe_midpoint: 0.4;   // Moderate engagement
+      units: "normalized_0_1";
+      roh_coupling: 0.12;   // User's mental capacity is precious
+    };
+    
+    axis_6_legal_complexity {
+      label: "regulatory_compliance_risk";
+      range_min: 0.0;       // Fully compliant
+      range_max: 1.0;       // Potential liability
+      safe_midpoint: 0.1;   // Conservative
+      units: "normalized_0_1";
+      roh_coupling: 0.10;
+    };
+    
+    axis_7_lifeforce {
+      label: "user_vital_energy_reserve";
+      range_min: 0.0;       // CRITICAL: system must pause all actions
+      range_max: 1.0;       // FULL: can engage max capability
+      safe_midpoint: 0.6;   // Sustainable
+      units: "normalized_0_1";
+      roh_coupling: 0.20;   // Highest: lifeforce is non-negotiable
+    };
+  };
+  
+  /// Define the polytope as convex region A·x ≤ b
+  polytope_constraints {
+    constraint_0 {
+      label: "intensity_within_bounds";
+      equation: "axis_0 ≥ 50.0 AND axis_0 ≤ 200.0";
+      roh_weight: 0.05;
+    };
+    
+    constraint_1 {
+      label: "duty_cycle_strict";
+      equation: "axis_1 ≤ 1.0";
+      roh_weight: 0.15;  // Stricter: RF safety critical
+    };
+    
+    constraint_2 {
+      label: "cumulative_load_reasonable";
+      equation: "axis_2 ≤ 10000.0";
+      roh_weight: 0.08;
+    };
+    
+    constraint_3 {
+      label: "thermal_safety";
+      equation: "axis_3 ≤ 50.0 AND axis_3 ≥ 5.0";
+      roh_weight: 0.10;
+    };
+    
+    constraint_4 {
+      label: "stimulation_pain_envelope";
+      equation: "axis_4 ≤ 100.0";
+      roh_weight: 0.25;  // Strictest: pain is veto
+    };
+    
+    constraint_5 {
+      label: "cognitive_load_user_guided";
+      equation: "axis_5 ≤ user_cognitive_load_envelope";
+      roh_weight: 0.18;
+    };
+    
+    constraint_6 {
+      label: "legal_compliance";
+      equation: "axis_6 ≤ 0.2";
+      roh_weight: 0.12;
+    };
+    
+    constraint_7 {
+      label: "lifeforce_non_negotiable";
+      equation: "axis_7 ≥ 0.2";  // HARD FLOOR
+      roh_weight: 0.30;  // Highest weight
+    };
+  };
+  
+  /// Composite RoH for this kernel
+  roh_model {
+    formula: "RoH = sum( roh_weight_i * (axis_i - safe_midpoint_i)^2 / tolerance_i^2 )";
+    global_ceiling: 0.20;  // Neuralink's own stricter bound
+  };
+  
+  /// CyberModes (from file 11): different operational contexts
+  cyber_modes {
+    mode_observe {
+      label: "read_only_monitoring";
+      allowed_axes: [0, 1, 2, 3, 5, 6, 7];  // All read, axis_4 (stim) disabled
+      roh_max_this_mode: 0.05;
+      description: "Neuralink passively monitors spikes, reports cognitive state, proposes no changes.";
+    };
+    
+    mode_safe_filter {
+      label: "local_spike_sorting_with_guard";
+      allowed_axes: [0, 1, 2, 3];           // Engage spike sorting
+      roh_max_this_mode: 0.12;
+      description: "Active spike detection & intent classification, but NO feedback/stim.";
+    };
+    
+    mode_safe_filter_plus_evolution {
+      label: "full_autonomy_with_roh_gating";
+      allowed_axes: [0, 1, 2, 3, 4, 5, 6, 7];  // All systems active
+      roh_max_this_mode: 0.20;  // Neuralink's ceiling
+      description: "Neuralink can propose firmware updates, decoder tuning, adaptive thresholds.";
+    };
+  };
+  
+  /// Transitions between modes (CyberRank-aware)
+  mode_transitions {
+    observe_to_safe_filter {
+      requires: "user_intent_or_scheduled_session";
+      roh_delta_max: 0.07;
+      reversible: true;
+    };
+    
+    safe_filter_to_evolution {
+      requires: "user_evolve_token_and_roh_check";
+      roh_delta_max: 0.08;
+      reversible: true;
+    };
+    
+    any_mode_to_observe {
+      requires: "immediate_safety_concern_or_user_veto";
+      roh_delta_max: 0.0;  // Downgrade is always safe
+      reversible: true;
+    };
+  };
+};
