@@ -1,0 +1,35 @@
+// Quality-of-Service handling for simultaneous channel activity
+
+qos_policy {
+  scenario_light_use {
+    description: "User resting, minimal brain activity";
+    active_channels: [motor_intent];  // Only motor, <10 spikes/sec
+    duty_cycle_budget: 0.1_percent;
+    roh_max: 0.05;
+  };
+  
+  scenario_moderate_use {
+    description: "User reaching + speaking";
+    active_channels: [motor_intent, speech_intent];
+    duty_cycle_budget: 0.5_percent;
+    roh_max: 0.12;
+    scheduling: "tdm_motor_3ms_speech_2ms";
+  };
+  
+  scenario_heavy_use {
+    description: "User reaching + speaking + haptic feedback";
+    active_channels: [motor_intent, speech_intent, sensory_feedback];
+    duty_cycle_budget: 1.0_percent;  // At limit
+    roh_max: 0.20;  // At Neuralink's ceiling
+    scheduling: "adaptive_tdm_per_step_11";
+  };
+  
+  scenario_emergency_override {
+    description: "Safety-critical motor command (e.g., prevent fall)";
+    active_channels: [motor_intent];  // All other channels suppressed
+    duty_cycle_budget: 2.0_percent;  // Temporary overshoot allowed
+    roh_max: 0.25;  // Temporary relaxation
+    duration_max_seconds: 5;
+    consequence_after: "return_to_previous_scenario_or_safe_mode";
+  };
+};
