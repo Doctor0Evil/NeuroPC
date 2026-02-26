@@ -1,0 +1,54 @@
+// Principal component basis for intent extraction
+
+intent_manifold {
+  basis_type: "pca_32_components";
+  variance_explained: 0.92;  // 92% of total variance
+  
+  component_0 {
+    label: "motor_direction_anterior_posterior";
+    top_contributing_channels: [42, 51, 63, 71];  // M1 electrodes with highest weight
+    weight_vector: [-0.12, +0.31, -0.08, ...];  // PCA weights (1024-dim vector)
+    interpretation: "forward/backward reach";
+    roh_safe: true;  // Motor direction is motor_intent class, can export
+  };
+  
+  component_1 {
+    label: "motor_direction_medial_lateral";
+    top_contributing_channels: [48, 55, 68, 82];
+    weight_vector: [+0.18, -0.25, +0.14, ...];
+    interpretation: "left/right reach";
+    roh_safe: true;
+  };
+  
+  // ... components 2-31 ...
+  
+  component_31 {
+    label: "residual_cognitive_noise";
+    top_contributing_channels: [501, 610, 723, 789];  // PFC and STS
+    weight_vector: [+0.02, +0.01, -0.03, ...];  // Low weights, mostly noise
+    interpretation: "thought activity unrelated to motor intent";
+    roh_safe: false;  // Part of cognitive_planning class, must suppress
+  };
+};
+
+/// Decoder matrix: maps 1024 raw channels → 32-D intent vector
+decoder_matrix {
+  input_dim: 1024;
+  output_dim: 32;
+  matrix_format: "dense_f32";  // 32 × 1024 matrix stored as binary
+  storage_location: "intent_manifold_basis.matrix.bin";
+  compression: "none";  // For now, no compression
+};
+
+/// Online processing recipe
+online_decoding_recipe {
+  step_1_input: "raw_spikes_1024ch_at_1khz";
+  step_2_standardize: "subtract_baseline_mean, divide_by_baseline_std";  // From Step 2
+  step_3_project: "multiply_by_decoder_matrix → 32-D vector";
+  step_4_label: "extract_motor_direction_xyz (components 0-8)";
+  step_5_guard: "check_roh_safe_flag: proceed_only_if_true";
+  step_6_output: "export_intent_vector_3d to device";
+  step_7_suppress: "zero_out components with roh_safe=false (cognitive noise)";
+  
+  latency_budget_ms: 50;  // Must complete within 50ms for real-time control
+};
