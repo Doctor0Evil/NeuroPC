@@ -1,0 +1,18 @@
+// Latency accounting from spike to motor output
+
+latency_budget {
+  spike_time_to_threshold_crossing: 0.5_ms;   // Analog response
+  threshold_to_snn_input: 1.0_ms;             // AD conversion & buffering
+  snn_compute_32d_projection: 2.0_ms;         // SNN forward pass (INT8)
+  snn_output_to_neurorights_filter: 0.5_ms;
+  neurorights_filter_to_ble_packet: 1.0_ms;
+  ble_tx_airtime: 2.0_ms;                     // 48 bits @ 2 Mbps
+  ble_rx_to_user_device: 1.0_ms;
+  device_decode_to_motor_command: 1.0_ms;
+  motor_command_to_physical_movement: 1.5_ms; // Latency in EMG/actuator
+  
+  total_latency_ms: 10.5;
+  acceptable_threshold_ms: 10.0;
+  
+  warning: "Total latency slightly exceeds target. Recommend removing ble_airtime via inductive link or reducing snn_compute.";
+};
