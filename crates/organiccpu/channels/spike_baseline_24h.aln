@@ -1,0 +1,40 @@
+// Binary: Each electrode gets a baseline profile
+
+baseline_epoch {
+  electrode_id: "thread_0_ch_42";
+  region: "primary_motor_m1_hand";
+  
+  statistics_24h {
+    mean_firing_rate: 15.3;      // Hz
+    std_firing_rate: 4.2;        // Standard deviation
+    percentile_05: 8.1;
+    percentile_95: 23.7;
+    silence_periods_count: 47;   // How often goes silent for >100ms
+    bursting_episodes: 12;       // High-rate bursts (>50 Hz)
+  };
+  
+  sleep_cycle_modulation {
+    waking_baseline: 15.3;
+    nrem_baseline: 8.2;          // Usually quieter
+    rem_baseline: 18.5;          // Higher in REM (dream-like)
+    sleep_stage_detection_reliability: 0.87;  // Can we detect sleep from this channel?
+  };
+  
+  /// Neurorights: what does baseline tell us about private thought?
+  private_thought_markers {
+    high_coherence_regions: [42, 51, 63];  // These electrodes fire together often
+    coherence_threshold: 0.6;
+    interpretation: "likely_local_circuit_thought_assembly";
+    risk_if_exposed: "thought_privacy_breach";
+  };
+  
+  health_metrics {
+    recording_quality: 0.95;      // Signal-to-noise ratio
+    electrode_impedance_kohm: 450;  // Impedance (should stay stable)
+    drift_detected: false;        // Is electrode signal drifting over time?
+    recommendation: "healthy_continue_monitoring";
+  };
+  
+  timestamp_collected: "2026-02-25T21:00:00Z";
+  hex_stamp: "blake3_hash_of_baseline_profile";
+};
