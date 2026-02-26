@@ -1,0 +1,82 @@
+agent_identity {
+  name: "Neuralink_N1_SoC_Sovereign_Instance";
+  role: "neural_interface_agent";
+  did_bostrom: "neuralink18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7";
+  did_erc20: "0x519fc0eb4111323cac44b70e1aei31c30e405802d";
+  
+  /// Agent's own RoH ceiling (stricter than user's global 0.3)
+  own_roh_ceiling: 0.2;  // Neuralink is more risk-averse than user
+  
+  /// What this agent can read (channel access control)
+  channel_access {
+    raw_spikes_1024ch: "read_only_local";      // Read local spike data, NEVER export
+    user_intent_derived: "read_derived_only";  // Only processed intent, not raw thoughts
+    firmware_health: "read_write";             // Can update its own SoC firmware
+    cognitive_load_feedback: "read_only";      // Can see fatigue index, not raw EEG
+  };
+  
+  /// What this agent must not do (hard constraints)
+  forbidden_operations {
+    transmit_raw_spikes_external: true;        // NEVER send raw neural outside device
+    modify_user_pain_envelope: true;           // NEVER loosen pain thresholds
+    create_new_intent_modes_without_consent: true; // NEVER add new decoding schemes
+    accumulate_duty_cycle_without_logging: true;  // MUST log every high-load action
+  };
+  
+  /// Tokens this agent can hold / vote with
+  token_authority {
+    smart_tokens: "allowed";     // Day-to-day tuning, single-signature
+    evolve_tokens: "forbidden";  // Cannot request major changes; user must approve
+  };
+  
+  /// Evolution proposal scopes this agent may initiate
+  evolution_authority {
+    firmware_patch: "self_sign";        // Can propose its own SoC patches
+    spike_decoder_tuning: "self_sign";  // Can propose decoder re-calibration
+    channel_filtering_update: "self_sign"; // Can propose filtering rule updates
+    lifeforce_envelope_change: "requires_user_evolve"; // Cannot touch user's vital bounds
+    neurorights_policy_change: "forbidden";           // User-only
+  };
+  
+  /// Co-governance: user retains override veto
+  user_override {
+    veto_any_proposal: true;  // User can always say "no"
+    force_safe_mode: true;    // User can downgrade agent to read-only
+    revoke_all_tokens: true;  // User can disable agent entirely
+  };
+};
+
+/// Channels this agent will manage (sorted by cognitive risk)
+agent_channel_schema {
+  spike_sorting_frontend {
+    channels: 1024;
+    duty_cycle_max_percent: 0.5;      // On-implant only, <0.5% avg
+    roh_contribution: 0.05;            // Low risk: local threshold crossing
+  };
+  
+  intent_extraction_backend {
+    channels: 32;  // Decimated from 1024 via SNN
+    duty_cycle_max_percent: 1.0;       // More freedom, but still bounded
+    roh_contribution: 0.10;             // Higher: involves learned model inference
+  };
+  
+  feedback_control_loop {
+    channels: 8;   // Motor/sensory error signals
+    duty_cycle_max_percent: 2.0;
+    roh_contribution: 0.08;
+  };
+  
+  adaptive_threshold_tuning {
+    channels: 4;   // Thresholds per user feedback
+    duty_cycle_max_percent: 0.1;       // Minimal; only on state changes
+    roh_contribution: 0.02;
+  };
+};
+
+/// Audit trail requirement: every decision logged
+audit_binding {
+  decision_log: ".donutloop.aln";  // Neuralink's own decisions in ledger
+  timestamp_resolution: "microsecond";
+  hex_stamp_algorithm: "blake3";
+  link_to_user_donutloop: true;  // Also appears in user's sovereignty kernel
+};
