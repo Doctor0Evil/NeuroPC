@@ -1,0 +1,13 @@
+aln NeuralIntentEcoSchema2026v1
+
+record NeuralIntentEco
+  string projectid
+  string model_id              # ONNX/WinML model version
+  string intent_class          # e.g., Scroll, Select, Pause
+  float  decoder_accuracy      # 0.0–1.0
+  float  latency_ms            # median per intent
+  float  energy_per_intent_mJ  # WPR/ETW-derived
+  float  peak_power_W          # during inference burst
+  float  duty_cycle_ratio      # active_time / period
+  float  ecoimpactscore        # 0.0–1.0 normalized
+  string notes
