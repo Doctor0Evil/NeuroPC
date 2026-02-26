@@ -1,0 +1,30 @@
+neurorights_invariant {
+  mental_privacy {
+    rule: raw_spikes_NEVER_leave_device;
+    exception: NONE;
+    bcr: 1.0;  // Perfect compliance
+  };
+
+  cognitive_liberty {
+    rule: no_coercive_intent_inference;
+    mechanism: derived_intent_export_requires_explicit_consent;
+    consent_type: per_session_revocable;
+    bcr: 0.95;  // Human oversight loop
+  };
+
+  low_social_disturbance {
+    rule: RF_duty_cycle_less_0_5_percent;
+    rule: no_continuous_broadcast;
+    rule: field_strength_less_0_01_microTesla_at_1m;
+    monitoring: real_time_via_EcoSafeRfGate;
+    bcr: 0.98;  // Automated enforcement
+  };
+
+  eco_positivity {
+    rule: device_hours_saved_gte_implant_carbon_footprint_via_LCA;
+    accounting: lifecycle_assessment_triennium;
+    bcr: 0.90;  // Requires annual audit
+  };
+
+  combined_RoH_ceiling: 0.3;  // Composite risk-of-harm
+}
