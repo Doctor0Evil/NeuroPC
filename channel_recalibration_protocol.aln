@@ -1,0 +1,68 @@
+// On-device adaptive learning for channel decoders
+
+recalibration_protocol {
+  trigger_conditions {
+    trigger_1_daily_maintenance {
+      schedule: "daily_00_00_utc";
+      description: "Routine retraining on yesterday's data";
+    };
+    
+    trigger_2_accuracy_drop {
+      metric: "intent_classification_error_rate";
+      threshold: "error_rate > 15_percent";
+      action: "trigger_emergency_retrain";
+    };
+    
+    trigger_3_user_request {
+      mechanism: "user_presses_calibration_button";
+      effect: "spawn_interactive_retrain_session";
+    };
+  };
+  
+  /// Retraining procedure (on-implant, energy-efficient)
+  procedure {
+    step_1_collect_data {
+      window_duration_hours: 24;
+      channels_to_sample: [motor_intent, sensory_feedback];  // Not cognitive
+      sample_rate: 100_hz;
+      data_retention: "local_24h_buffer";
+      roh_cost: 0.01;  // Minimal
+    };
+    
+    step_2_label_data {
+      mechanism: "user_performs_known_reaching_tasks";
+      task_set: ["reach_forward", "reach_backward", "reach_left", "reach_right", "grasp_close", "grasp_open"];
+      duration_per_task: 30_seconds;
+      sessions_per_day: 2;
+      roh_cost: 0.02;
+    };
+    
+    step_3_train_snn {
+      algorithm: "online_STDP_hebbian_learning";
+      iterations: 10;
+      batch_size: 64_samples;
+      learning_rate: 0.001;
+      roh_cost: 0.04;  // Compute-intensive
+      processing_time_minutes: 15;
+    };
+    
+    step_4_validate {
+      test_set: "held_out_20_percent_of_labeled_data";
+      metric: "accuracy_on_test_set";
+      threshold_to_accept: 92_percent;
+      threshold_to_reject_and_revert: 85_percent;
+      roh_cost: 0.01;
+    };
+    
+    step_5_deploy {
+      action: "if_accuracy_good_replace_snn_decoder";
+      rollback: "if_accuracy_poor_revert_to_previous_model";
+      logging: "new_model_version_hex_stamped_in_donutloop";
+      roh_cost: 0.001;
+    };
+  };
+  
+  /// RoH Budget for Recalibration
+  total_roh_for_recalibration: 0.10;  // <10% of daily RoH budget
+  consequence_if_exceeds: "skip_recalibration_that_day_try_next_day";
+};
