@@ -1,0 +1,40 @@
+// Real-time monitoring of electrode health
+
+channel_integrity_monitor {
+  monitoring_interval_sec: 60;  // Check every minute
+  
+  /// Per-electrode health checks
+  checks {
+    check_drift {
+      metric: "spike_baseline_mean_rate_hz";
+      threshold_change: 50_percent;  // If baseline mean changes >50%, flag
+      action_if_triggered: "log_warning_do_not_block";
+    };
+    
+    check_noise {
+      metric: "spike_baseline_std_rate_hz";
+      threshold_escalation: "std > 2 * baseline_std";
+      action_if_triggered: "reduce_threshold_slightly_retrain";
+    };
+    
+    check_impedance {
+      metric: "electrode_impedance_kohm";
+      threshold_degradation: 100_kohm_increase;  // Electrode failing?
+      action_if_triggered: "alert_user_consider_replacement";
+    };
+    
+    check_bit_errors {
+      metric: "data_packet_crc_errors_per_hour";
+      threshold: 10_errors_per_hour;
+      action_if_triggered: "increase_ble_power_or_switch_inductive";
+    };
+  };
+  
+  /// Logging & Neurorights
+  logging {
+    log_destination: ".channel_health.aln";
+    retention_policy: "30_days_local";
+    upload_to_cloud: "forbidden";  // Never leave device
+    include_in_donutloop: "false";  // Internal monitoring, not governance
+  };
+};
