@@ -1,0 +1,79 @@
+// Maps physical electrode positions to M1, S1, PFC regions
+
+electrode_grid_specification {
+  thread_count: 10;
+  electrodes_per_thread: 100;  // (Some threads may have fewer for safety margin)
+  total_electrodes: 1024;
+  
+  spatial_bin {
+    bin_name: "primary_motor_m1_hand";
+    threads: [0, 1, 2];           // Threads 0-2 target M1 hand area
+    electrodes: [0_0:0_99, 1_0:1_99, 2_0:2_99];  // Notation: thread_start:thread_end
+    volume_mm3: 12.5;             // Estimated volume in brain
+    typical_firing_rate_hz: 15.0; // Units: average spikes/sec
+    neurorights_class: "motor_intent";  // Non-private: okay to export
+    roh_contribution_hz: 0.0008;   // Per spike Hz, contribution to RoH
+  };
+  
+  spatial_bin {
+    bin_name: "primary_somatosensory_s1_hand";
+    threads: [3, 4];
+    electrodes: [3_0:3_99, 4_0:4_99];
+    volume_mm3: 10.2;
+    typical_firing_rate_hz: 12.0;
+    neurorights_class: "somatosensory_feedback";  // Sensory, mildly private
+    roh_contribution_hz: 0.0010;
+  };
+  
+  spatial_bin {
+    bin_name: "prefrontal_cortex_planning";
+    threads: [5, 6, 7];
+    electrodes: [5_0:5_99, 6_0:6_99, 7_0:7_99];
+    volume_mm3: 18.0;
+    typical_firing_rate_hz: 8.0;  // Slower, more integrated
+    neurorights_class: "cognitive_planning";  // PRIVATE: raw thought
+    roh_contribution_hz: 0.0015;   // Higher: cognitive risk
+  };
+  
+  spatial_bin {
+    bin_name: "superior_temporal_sulcus_speech";
+    threads: [8, 9];
+    electrodes: [8_0:8_99, 9_0:9_99];
+    volume_mm3: 8.5;
+    typical_firing_rate_hz: 20.0;  // Speech is fast
+    neurorights_class: "speech_intent";  // Private: inner speech
+    roh_contribution_hz: 0.0012;
+  };
+};
+
+/// Neurorights policy per bin (from your .neurorights.json)
+neurorights_enforcement {
+  motor_intent {
+    rule_raw_spikes_retention: "allowed_24hrs_local";
+    rule_export_to_device: "allowed_derived_only";
+    rule_cloud_sync: "forbidden";
+    rule_commercial_use: "forbidden";
+  };
+  
+  somatosensory_feedback {
+    rule_raw_spikes_retention: "allowed_24hrs_local";
+    rule_export_to_device: "allowed_with_consent";
+    rule_cloud_sync: "forbidden";
+  };
+  
+  cognitive_planning {
+    rule_raw_spikes_retention: "allowed_session_only";  // Shorter retention
+    rule_export_to_device: "forbidden";  // NEVER leave device
+    rule_cloud_sync: "absolutely_forbidden";
+    rule_commercial_use: "forbidden";
+    rule_employment_screening: "forbidden";
+    rule_dream_state_processing: "forbidden";  // Per file 10 (dream neurorights)
+  };
+  
+  speech_intent {
+    rule_raw_spikes_retention: "allowed_48hrs_local";
+    rule_export_to_device: "allowed_decoded_speech_only";  // Processed, not raw
+    rule_cloud_sync: "forbidden";
+    rule_commercial_use: "forbidden";
+  };
+};
