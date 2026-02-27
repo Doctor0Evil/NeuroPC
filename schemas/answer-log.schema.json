@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NeuroPC Answer Log Row",
+  "description": "One governed, non-actuating answer emitted via neuro.print! or other NPFs.",
+  "type": "object",
+  "properties": {
+    "body": {
+      "type": "string",
+      "description": "Rendered text body of the answer."
+    },
+    "route": {
+      "type": "string",
+      "enum": ["Info", "GovernanceDesign", "Debug", "Telem"],
+      "description": "High-level route classification from AnswerRoute."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain tag, e.g., BCI, Biomech, HIT, MCI, Legal."
+    },
+    "knowledge_factor": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "KnowledgeFactor F ∈ [0,1] for this answer."
+    },
+    "roh": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 0.3,
+      "description": "Local AnswerRisk RoH estimate, clamped at 0.3."
+    },
+    "cybostate": {
+      "type": "string",
+      "enum": [
+        "RetrievalOnly",
+        "ResearchReady",
+        "GovernanceReady",
+        "ActuationForbidden"
+      ],
+      "description": "Cybostate class assigned by the answer-quality kernel."
+    },
+    "rest_advisory": {
+      "type": "boolean",
+      "description": "True if BioState envelopes recommend rest / reduced load."
+    },
+    "session_id": {
+      "type": ["string", "null"],
+      "description": "Optional session correlation ID."
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp when the answer was created."
+    },
+    "hexstamp": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]+$",
+      "description": "Hash over body + metadata for tamper-evidence."
+    },
+    "prev_hexstamp": {
+      "type": "string",
+      "description": "Hexstamp of previous answer in this log, or 'GENESIS'."
+    }
+  },
+  "required": [
+    "body",
+    "route",
+    "domain",
+    "knowledge_factor",
+    "roh",
+    "cybostate",
+    "rest_advisory",
+    "timestamp_utc",
+    "hexstamp",
+    "prev_hexstamp"
+  ],
+  "additionalProperties": false
+}
