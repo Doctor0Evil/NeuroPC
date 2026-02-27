@@ -1,0 +1,19 @@
+capability_id = "neuro-print-v1"
+module_id = "sovereigntycore::neuro_print"
+subject_id = "bostrom18sd2ujv24ual9c9pshtxys6j8knh6xaead9ye7"
+
+role = "suggest-only"
+actuation_forbidden = true
+non_commercial = true
+
+routes_allowed = ["Info", "GovernanceDesign"]
+routes_forbidden = ["Actuation"]
+
+roh_ceiling = 0.3
+roh_domain_profile = "neuromorph.general"
+
+logs = {
+  kind = "answerquality",
+  path = "logs/answers/answers-*.answer.ndjson",
+  donutloop_linked = true
+}
