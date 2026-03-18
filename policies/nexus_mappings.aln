@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neuro.pc/schemas/nexus_endpoint.aln",
+  "endpoints": [
+    { "id": "bci-stream-frontal", "manifold": [0.1,0.2,0.3,0.0,0.25], "type": "bci_stream", "scopes": ["ota_route"] },
+    { "id": "cybernetic-chipset-mt6883", "manifold": [0.0,0.0,0.0,0.0,0.25], "type": "cybernetic_chipset", "cores": "4xA77+2xA76+2xA74", "scopes": ["discover_only","ota_route"] }
+  ],
+  "enforce": "sovereignty_core.evaluate_update"
+}
